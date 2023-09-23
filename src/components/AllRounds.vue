@@ -4,23 +4,59 @@ import { reactive } from 'vue'
 // @ts-ignore
 import $ from 'jquery'
 
-let d = { r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
-var localTime = new Date();
-var diffUTC =  localTime.getTimezoneOffset()
-function getData() {
+
+let dYesterday = { r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
+function getYesterdayData() {
   $.ajax({
-    url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data.json',
+    url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_yesterday.json',
     type: 'get',
     dataType: 'json',
     crossDomain: true,
     async: false,
     success: function (resp: any) {
-      d = resp
+      dYesterday = resp
     }
   })
 }
-getData()
-const data = reactive(JSON.parse(JSON.stringify(d)))
+getYesterdayData()
+
+let dTomorrow = { r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
+function getTomorrowData() {
+  $.ajax({
+    url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_tomorrow.json',
+    type: 'get',
+    dataType: 'json',
+    crossDomain: true,
+    async: false,
+    success: function (resp: any) {
+      dTomorrow = resp
+    }
+  })
+}
+getTomorrowData()
+
+// Get the right payload depending on the date
+let today = new Date()
+let todayString = today.toLocaleDateString()
+let storedDateString = localStorage.getItem("lastVisitDateString")
+let lastData = localStorage.getItem("lastData")
+if (!storedDateString) {
+  // Never been to site
+  localStorage.setItem("lastVisitDateString", todayString)
+  // Set yesterday's data as the last data
+  localStorage.setItem("lastData", JSON.stringify(dYesterday))
+} else {
+  // Been to the site
+  if (todayString === storedDateString && lastData) {
+    // Use last data
+  } else if (todayString !== storedDateString && lastData) {
+    // New day use next data
+    localStorage.setItem("lastData", JSON.stringify(dTomorrow))
+    localStorage.setItem("lastVisitDateString", todayString)
+  }
+}
+
+const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
 </script>
 
 <template>
