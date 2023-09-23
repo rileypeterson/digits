@@ -5,6 +5,8 @@ import { reactive } from 'vue'
 import $ from 'jquery'
 
 let d = { r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
+var localTime = new Date();
+var diffUTC =  localTime.getTimezoneOffset()
 function getData() {
   $.ajax({
     url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data.json',

@@ -1,6 +1,7 @@
 import random
 from itertools import product, permutations
 import json
+import shutil
 
 
 def calc(m, c_low, c_high, t_low, t_high, t_prob_thresh):
@@ -33,13 +34,13 @@ def calc(m, c_low, c_high, t_low, t_high, t_prob_thresh):
                     s = _comp_done[form]
                 except KeyError:
                     if "+" in form:
-                        s = c[i] + c[i+1]
+                        s = c[i] + c[i + 1]
                     elif "-" in form:
-                        s = c[i] - c[i+1]
+                        s = c[i] - c[i + 1]
                     elif "*" in form:
-                        s = c[i] * c[i+1]
+                        s = c[i] * c[i + 1]
                     elif "/" in form:
-                        s = c[i] / c[i+1]
+                        s = c[i] / c[i + 1]
                     _comp_done[form] = s
                 # s = eval(form)
                 c[i + 1] = s
@@ -74,7 +75,7 @@ def calc(m, c_low, c_high, t_low, t_high, t_prob_thresh):
     return sorted(n), how, c_counts, target, n_ways
 
 
-if __name__ == "__main__":
+def write_digits(filepath):
     d = {}
     # Range from 2, 30
     # Round 1:
@@ -94,7 +95,7 @@ if __name__ == "__main__":
         # "c_counts": c_counts,
         "target": target,
         "n_ways": n_ways,
-        "round": 1
+        "round": 1,
     }
     print("Round 1 Done")
 
@@ -114,10 +115,9 @@ if __name__ == "__main__":
         # "c_counts": c_counts,
         "target": target,
         "n_ways": n_ways,
-        "round": 2
+        "round": 2,
     }
     print("Round 2 Done")
-
 
     # Round 3:
     # Composite: [3, 20]
@@ -135,10 +135,9 @@ if __name__ == "__main__":
         # "c_counts": c_counts,
         "target": target,
         "n_ways": n_ways,
-        "round": 3
+        "round": 3,
     }
     print("Round 3 Done")
-
 
     # Round 4:
     # Composite: [4, 25]
@@ -156,10 +155,9 @@ if __name__ == "__main__":
         # "c_counts": c_counts,
         "target": target,
         "n_ways": n_ways,
-        "round": 4
+        "round": 4,
     }
     print("Round 4 Done")
-
 
     # Round 5:
     # Composite: [4, 25]
@@ -177,9 +175,14 @@ if __name__ == "__main__":
         # "c_counts": c_counts,
         "target": target,
         "n_ways": n_ways,
-        "round": 5
+        "round": 5,
     }
     print("Round 5 Done")
 
-    with open("data/data.json", "w") as f:
+    with open(filepath, "w") as f:
         json.dump(d, f)
+
+
+if __name__ == "__main__":
+    shutil.copyfile("data/data_tomorrow.json", "data/data_yesterday.json")
+    write_digits("data/data_tomorrow.json")
