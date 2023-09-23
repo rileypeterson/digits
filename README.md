@@ -49,6 +49,7 @@ npm run lint
 ```
 npm run build
 # uncomment dist in gitignore
-git push origin `git subtree split --prefix dist main`:gh-pages --force
+git subtree push --prefix dist origin gh-pages
+# git push origin `git subtree split --prefix dist main`:gh-pages --force
 git reset --hard origin/main
 ```
