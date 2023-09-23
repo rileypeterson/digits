@@ -1,0 +1,96 @@
+<script setup lang="ts">
+defineProps<{
+  op: string
+}>()
+</script>
+
+<template>
+  <button class="operator-circle">
+    <span>{{ op }}</span>
+  </button>
+</template>
+
+<style scoped>
+.operator-circle > span {
+  position: relative;
+  top: calc(50% - 20px);
+}
+
+.operator-circle.green {
+  transition: all var(--color-change-time);
+  background: var(--green);
+  color: white;
+  border: 3px solid transparent;
+}
+
+.operator-circle {
+  transition: all var(--color-change-time);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px dashed black;
+  font-size: 30px;
+  font-weight: bold;
+  color: #ffffff;
+  display: flex; /* or inline-flex */
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  margin-left: 8px;
+}
+
+@media (min-width: 400px) {
+  .operator-circle {
+    transition: all var(--color-change-time);
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    border: 3px dashed black;
+    font-size: 50px;
+    font-weight: bold;
+    color: #ffffff;
+    display: flex; /* or inline-flex */
+    align-items: center;
+    justify-content: center;
+    background: #000000;
+    margin-left: 8px;
+  }
+  .operator-circle > span {
+    position: relative;
+    top: calc(50% - 33px);
+  }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+  .operator-circle {
+    transition: all var(--color-change-time);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px dashed black;
+    font-size: 60px;
+    font-weight: bold;
+    color: #ffffff;
+    background: #000000;
+    margin-left: 8px;
+    padding: 0;
+  }
+  .operator-circle > span {
+    position: relative;
+    top: calc(50% - 40px);
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+}
+</style>
