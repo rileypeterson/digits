@@ -36,7 +36,8 @@ defineProps<{
   align-items: center;
   justify-content: center;
   background: #000000;
-  margin-left: 8px;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 @media (min-width: 400px) {
@@ -53,7 +54,8 @@ defineProps<{
     align-items: center;
     justify-content: center;
     background: #000000;
-    margin-left: 8px;
+    margin-left: 4px;
+    margin-right: 4px;
   }
   .operator-circle > span {
     position: relative;
@@ -73,7 +75,8 @@ defineProps<{
     font-weight: bold;
     color: #ffffff;
     background: #000000;
-    margin-left: 8px;
+    margin-left: 4px;
+    margin-right: 4px;
     padding: 0;
   }
   .operator-circle > span {

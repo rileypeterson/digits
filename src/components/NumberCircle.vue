@@ -2,11 +2,10 @@
 defineProps<{
   v: number
 }>()
-
 </script>
 
 <template>
-    <button class="number-circle">{{ v }}</button>
+  <button class="number-circle">{{ v }}</button>
 </template>
 
 <style scoped>
@@ -30,7 +29,8 @@ defineProps<{
   align-items: center;
   justify-content: center;
   background: #ffffff;
-  margin-left: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 @media (min-width: 400px) {
@@ -47,7 +47,8 @@ defineProps<{
     align-items: center;
     justify-content: center;
     background: #ffffff;
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
   }
 }
 
@@ -66,7 +67,8 @@ defineProps<{
     align-items: center;
     justify-content: center;
     background: #ffffff;
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
   }
 }
 

@@ -66,12 +66,12 @@ const isOp = (s: string) => {
 }
 
 function mapCircleToValue(s: string) {
-  if (s == "upperLeft") return upperLeft
-  if (s == "upperCenter") return upperCenter
-  if (s == "upperRight") return upperRight
-  if (s == "lowerLeft") return lowerLeft
-  if (s == "lowerCenter") return lowerCenter
-  if (s == "lowerRight") return lowerRight
+  if (s == 'upperLeft') return upperLeft
+  if (s == 'upperCenter') return upperCenter
+  if (s == 'upperRight') return upperRight
+  if (s == 'lowerLeft') return lowerLeft
+  if (s == 'lowerCenter') return lowerCenter
+  if (s == 'lowerRight') return lowerRight
 }
 
 function applyOp(fc: number, op: string, sc: number) {
@@ -86,13 +86,10 @@ function applyOp(fc: number, op: string, sc: number) {
     res = fc / sc
   }
   if (res >= 0 && Number.isInteger(res)) {
-    setTimeout(
-      function () {
-        mapCircleToValue(secondCircle.value).value = res
-        checkWinner()
-      },
-      400
-    )
+    setTimeout(function () {
+      mapCircleToValue(secondCircle.value).value = res
+      checkWinner()
+    }, 400)
     return true
   } else {
     return false
@@ -355,7 +352,7 @@ function handleClick(cell: string) {
 <template>
   <div class="container w-100">
     <div class="row justify-content-center mb-2">
-      <div class="target">{{ target }}</div>
+        <div class="target mx-auto">{{ target }}</div>
     </div>
     <div class="row justify-content-center mb-2">
       <NumberCircle
@@ -488,7 +485,7 @@ function handleClick(cell: string) {
 }
 
 .target {
-  width: 150px;
+  width: 300px;
   height: 150px;
   line-height: 150px;
   font-size: 58px;
@@ -496,12 +493,11 @@ function handleClick(cell: string) {
   color: #000000;
   text-align: center;
   background: #ffffff;
-  margin-left: 5px;
 }
 
 @media (min-width: 400px) {
   .target {
-    width: 150px;
+    width: 300px;
     height: 150px;
     line-height: 150px;
     font-size: 72px;
@@ -509,14 +505,13 @@ function handleClick(cell: string) {
     color: #000000;
     text-align: center;
     background: #ffffff;
-    margin-left: 5px;
   }
 }
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
   .target {
-    width: 150px;
+    width: 300px;
     height: 150px;
     line-height: 150px;
     font-size: 80px;
@@ -524,7 +519,6 @@ function handleClick(cell: string) {
     color: #000000;
     text-align: center;
     background: #ffffff;
-    margin-left: 5px;
   }
 }
 
