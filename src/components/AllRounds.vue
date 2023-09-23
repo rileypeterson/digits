@@ -78,9 +78,11 @@ const data = reactive(JSON.parse(JSON.stringify(d)))
         role="tabpanel"
         aria-labelledby="about-tab"
       >
-        I loved to play the New York Times digits game. Unfortunately, it was
-        <a href="https://www.nytimes.com/games/digits">discontinued</a>. So, I built this version of
+        I loved to play the New York Times Digits game. Unfortunately, it was
+        <a target="_blank" href="https://www.nytimes.com/games/digits">discontinued</a>. So, I built this version of
         it.
+        <br>
+        The source code is available <a target="_blank" href="https://github.com/rileypeterson/digits">here</a>.
       </div>
     </div>
   </div>

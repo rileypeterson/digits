@@ -65,7 +65,16 @@ const isOp = (s: string) => {
   return ['refresh', 'plus', 'minus', 'times', 'divide'].includes(s)
 }
 
-function applyOp(t: any, fc: number, op: string, sc: number) {
+function mapCircleToValue(s: string) {
+  if (s == "upperLeft") return upperLeft
+  if (s == "upperCenter") return upperCenter
+  if (s == "upperRight") return upperRight
+  if (s == "lowerLeft") return lowerLeft
+  if (s == "lowerCenter") return lowerCenter
+  if (s == "lowerRight") return lowerRight
+}
+
+function applyOp(fc: number, op: string, sc: number) {
   let res = -1
   if (op === 'plus') {
     res = fc + sc
@@ -79,9 +88,9 @@ function applyOp(t: any, fc: number, op: string, sc: number) {
   if (res >= 0 && Number.isInteger(res)) {
     setTimeout(
       function () {
-        t[secondCircle.value] = res
-        checkWinner(t)
-      }.bind(t),
+        mapCircleToValue(secondCircle.value).value = res
+        checkWinner()
+      },
       400
     )
     return true
@@ -148,19 +157,16 @@ function setMergeAnimation(c1: string, c2: string) {
   }
 }
 
-function checkWinner(t: any) {
-  if (t[firstCircle.value] === target.value) {
-    console.log('winner')
+function checkWinner() {
+  if (mapCircleToValue(firstCircle.value).value === target.value) {
     confetti({
       particleCount: 100,
       spread: 70,
       origin: { y: 0.6 }
     })
     setTimeout(() => {
-      console.log('here')
       if (round.value < 5) {
         let next_round = 'r' + (round.value + 1) + '-tab'
-        console.log(next_round)
         document.getElementById(next_round)?.click()
       }
     }, 2200)
@@ -194,7 +200,7 @@ function fullReset(this: any, cell: string) {
   return
 }
 
-function handleClick(this: any, cell: string) {
+function handleClick(cell: string) {
   if (isOp(cell) && cell === 'refresh') {
     // Empty history
     if (history.length >= 1) {
@@ -242,7 +248,6 @@ function handleClick(this: any, cell: string) {
 
   if (firstCircle.value && !isOp(cell) && (selectedOp.value === '' || firstCircle.value == cell)) {
     // Unset first number cell
-    console.log('Unset first circle value', cell)
     if (firstCircle.value == cell) {
       // Case when you try and select secondCircle == firstCircle after op
       selectedOp.value = ''
@@ -292,11 +297,10 @@ function handleClick(this: any, cell: string) {
     secondCircle.value = cell
     numbers[cell].isClicked = true
     // Valid operation
-    let fc: number = this[firstCircle.value]
+    let fc: number = mapCircleToValue(firstCircle.value).value
     let op: string = selectedOp.value
-    let sc: number = this[secondCircle.value]
-
-    let t = applyOp(this, fc, op, sc)
+    let sc: number = mapCircleToValue(secondCircle.value).value
+    let t = applyOp(fc, op, sc)
     if (t) {
       // Merge animation
       setMergeAnimation(firstCircle.value, secondCircle.value)
