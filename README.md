@@ -44,3 +44,11 @@ npm run build
 ```sh
 npm run lint
 ```
+
+### Push to gh-pages branch
+```
+npm run build
+# uncomment dist in gitignore
+git push origin `git subtree split --prefix dist main`:gh-pages --force
+git reset --hard origin/main
+```
