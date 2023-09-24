@@ -60,11 +60,11 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
 </script>
 
 <template>
-  <div class="container-fluid w-100 px-5">
-    <ul class="nav nav-tabs justify-content-center row" id="myTab" role="tablist">
+  <div class="container-fluid w-100">
+    <ul class="nav nav-tabs justify-content-center row px-0 mx-0" id="myTab" role="tablist">
       <li class="nav-item col-4 col-md-2" role="presentation">
         <button
-          class="nav-link active mx-auto text-nowrap"
+          class="nav-link active text-nowrap mx-auto"
           id="r1-tab"
           data-bs-toggle="tab"
           data-bs-target="#r1"
@@ -79,7 +79,7 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
         <button
-          class="nav-link mx-auto text-nowrap"
+          class="nav-link text-nowrap mx-auto"
           id="r2-tab"
           data-bs-toggle="tab"
           data-bs-target="#r2"
@@ -94,7 +94,7 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
         <button
-          class="nav-link mx-auto text-nowrap"
+          class="nav-link text-nowrap mx-auto"
           id="r3-tab"
           data-bs-toggle="tab"
           data-bs-target="#r3"
@@ -109,7 +109,7 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
         <button
-          class="nav-link mx-auto text-nowrap"
+          class="nav-link text-nowrap mx-auto"
           id="r4-tab"
           data-bs-toggle="tab"
           data-bs-target="#r4"
@@ -124,7 +124,7 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
         <button
-          class="nav-link mx-auto text-nowrap"
+          class="nav-link text-nowrap mx-auto"
           id="r5-tab"
           data-bs-toggle="tab"
           data-bs-target="#r5"
@@ -137,9 +137,9 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
           Round 5
         </button>
       </li>
-      <li class="nav-item col-4 col-md-2 text-nowrap" role="presentation">
+      <li class="nav-item col-4 col-md-2" role="presentation">
         <button
-          class="nav-link mx-auto"
+          class="nav-link text-nowrap mx-auto"
           id="about-tab"
           data-bs-toggle="tab"
           data-bs-target="#about"
@@ -170,7 +170,7 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
         <DigitsRound :data="data['r5']"></DigitsRound>
       </div>
       <div
-        class="tab-pane fade text-center mt-5"
+        class="tab-pane fade text-center mt-5 px-4"
         id="about"
         role="tabpanel"
         aria-labelledby="about-tab"
@@ -190,6 +190,10 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
   font-size: 1.2rem;
 }
 
+#about-tab {
+  width: 105px;
+}
+
 @media (min-width: 400px) {
   #myTab {
     width: 100%;
@@ -198,6 +202,11 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
+  .container-fluid {
+    padding-left: 10%;
+    padding-right: 10%;
+
+  }
 }
 
 /* Medium devices (tablets, 768px and up) */
