@@ -13,7 +13,7 @@ defineProps<{
 <style scoped>
 .operator-circle > span {
   position: relative;
-  top: calc(50% - 20px);
+  top: calc(50% - 25px);
 }
 
 .operator-circle.green {
@@ -25,11 +25,11 @@ defineProps<{
 
 .operator-circle {
   transition: all var(--color-change-time);
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   border: 3px dashed black;
-  font-size: 30px;
+  font-size: 40px;
   font-weight: bold;
   color: #ffffff;
   display: flex; /* or inline-flex */
@@ -43,8 +43,8 @@ defineProps<{
 @media (min-width: 400px) {
   .operator-circle {
     transition: all var(--color-change-time);
-    width: 66px;
-    height: 66px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     border: 3px dashed black;
     font-size: 50px;
@@ -59,7 +59,7 @@ defineProps<{
   }
   .operator-circle > span {
     position: relative;
-    top: calc(50% - 33px);
+    top: calc(50% - 30px);
   }
 }
 

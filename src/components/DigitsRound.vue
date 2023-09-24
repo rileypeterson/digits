@@ -352,7 +352,7 @@ function handleClick(cell: string) {
 <template>
   <div class="container w-100">
     <div class="row justify-content-center mb-2">
-        <div class="target mx-auto">{{ target }}</div>
+      <div class="target mx-auto">{{ target }}</div>
     </div>
     <div class="row justify-content-center mb-2">
       <NumberCircle
@@ -440,9 +440,9 @@ function handleClick(cell: string) {
         @click="handleClick('divide')"
       ></OperatorCircle>
     </div>
-    <div class="row justify-content-center">
+    <!-- <div class="row justify-content-center">
       <button type="button" class="btn btn-outline-secondary w-25">Submit</button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -488,25 +488,14 @@ function handleClick(cell: string) {
   width: 300px;
   height: 150px;
   line-height: 150px;
-  font-size: 58px;
+  font-size: 72px;
   font-weight: bold;
   color: #000000;
   text-align: center;
   background: #ffffff;
 }
 
-@media (min-width: 400px) {
-  .target {
-    width: 300px;
-    height: 150px;
-    line-height: 150px;
-    font-size: 72px;
-    font-weight: bold;
-    color: #000000;
-    text-align: center;
-    background: #ffffff;
-  }
-}
+
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {

@@ -18,29 +18,29 @@ defineProps<{
 
 .number-circle {
   transition: all var(--color-change-time);
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 3px dashed black;
-  font-size: 32px;
-  font-weight: bold;
-  color: #000000;
-  display: flex; /* or inline-flex */
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-  margin-left: 5px;
-  margin-right: 5px;
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    border: 3px dashed black;
+    font-size: 40px;
+    font-weight: bold;
+    color: #000000;
+    display: flex; /* or inline-flex */
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 @media (min-width: 400px) {
   .number-circle {
     transition: all var(--color-change-time);
-    width: 125px;
-    height: 125px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     border: 3px dashed black;
-    font-size: 50px;
+    font-size: 45px;
     font-weight: bold;
     color: #000000;
     display: flex; /* or inline-flex */
