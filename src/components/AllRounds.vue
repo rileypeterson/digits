@@ -60,27 +60,86 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
 </script>
 
 <template>
-  <div class="container-fluid w-100">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="nav-item mx-auto" role="presentation" v-for="n in 5" :key="n">
+  <div class="container-fluid w-100 px-5">
+    <ul class="nav nav-tabs justify-content-center row" id="myTab" role="tablist">
+      <li class="nav-item col-4 col-md-2" role="presentation">
         <button
-          class="nav-link"
-          :class="`${n == 1 ? 'active' : ''}`"
-          :id="`r${n}-tab`"
+          class="nav-link active mx-auto text-nowrap"
+          id="r1-tab"
           data-bs-toggle="tab"
-          :data-bs-target="`#r${n}`"
+          data-bs-target="#r1"
           type="button"
           role="tab"
-          :aria-controls="`r${n}`"
-          :aria-selected="`${n == 1 ? 'true' : 'false'}`"
+          aria-controls="r1"
+          aria-selected="true"
           style="color: var(--round-green)"
         >
-          Round {{ n }}
+          Round 1
         </button>
       </li>
-      <li class="nav-item mx-auto" role="presentation">
+      <li class="nav-item col-4 col-md-2" role="presentation">
         <button
-          class="nav-link"
+          class="nav-link mx-auto text-nowrap"
+          id="r2-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#r2"
+          type="button"
+          role="tab"
+          aria-controls="r2"
+          aria-selected="false"
+          style="color: var(--round-green)"
+        >
+          Round 2
+        </button>
+      </li>
+      <li class="nav-item col-4 col-md-2" role="presentation">
+        <button
+          class="nav-link mx-auto text-nowrap"
+          id="r3-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#r3"
+          type="button"
+          role="tab"
+          aria-controls="r3"
+          aria-selected="false"
+          style="color: var(--round-green)"
+        >
+          Round 3
+        </button>
+      </li>
+      <li class="nav-item col-4 col-md-2" role="presentation">
+        <button
+          class="nav-link mx-auto text-nowrap"
+          id="r4-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#r4"
+          type="button"
+          role="tab"
+          aria-controls="r4"
+          aria-selected="false"
+          style="color: var(--round-green)"
+        >
+          Round 4
+        </button>
+      </li>
+      <li class="nav-item col-4 col-md-2" role="presentation">
+        <button
+          class="nav-link mx-auto text-nowrap"
+          id="r5-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#r5"
+          type="button"
+          role="tab"
+          aria-controls="r5"
+          aria-selected="false"
+          style="color: var(--round-green)"
+        >
+          Round 5
+        </button>
+      </li>
+      <li class="nav-item col-4 col-md-2 text-nowrap" role="presentation">
+        <button
+          class="nav-link mx-auto"
           id="about-tab"
           data-bs-toggle="tab"
           data-bs-target="#about"
@@ -127,6 +186,10 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
 </template>
 
 <style scoped>
+.nav-link {
+  font-size: 1.2rem;
+}
+
 @media (min-width: 400px) {
   #myTab {
     width: 100%;
