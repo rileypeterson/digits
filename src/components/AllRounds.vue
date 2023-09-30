@@ -18,10 +18,11 @@ if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
   localStorage.setItem('lastVisitDateString', todayDate)
 
   // Fetch data
+  let branch = "7-two-players-in-the-same-timezone-should-have-the-same-puzzle"
   let dYesterday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
   function getYesterdayData() {
     $.ajax({
-      url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_yesterday.json',
+      url: 'https://raw.githubusercontent.com/rileypeterson/digits/' + branch + '/data/data_yesterday.json',
       type: 'get',
       dataType: 'json',
       crossDomain: true,
@@ -36,7 +37,7 @@ if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
   let dToday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
   function getTodayData() {
     $.ajax({
-      url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_today.json',
+      url: 'https://raw.githubusercontent.com/rileypeterson/digits/' + branch + '/data/data_today.json',
       type: 'get',
       dataType: 'json',
       crossDomain: true,
@@ -51,7 +52,7 @@ if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
   let dTomorrow = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
   function getTomorrowData() {
     $.ajax({
-      url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_tomorrow.json',
+      url: 'https://raw.githubusercontent.com/rileypeterson/digits/' + branch + '/data/data_tomorrow.json',
       type: 'get',
       dataType: 'json',
       crossDomain: true,
@@ -87,7 +88,6 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
 
 <template>
   <div class="container-fluid w-100">
-    <div class="text-center">{{ puzzleDate }}</div>
     <ul class="nav nav-tabs justify-content-center row px-0 mx-0" id="myTab" role="tablist">
       <li class="nav-item col-4 col-md-2" role="presentation">
         <button
@@ -183,18 +183,23 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="r1" role="tabpanel" aria-labelledby="r1-tab">
         <DigitsRound :data="data['r1']"></DigitsRound>
+        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div class="tab-pane fade" id="r2" role="tabpanel" aria-labelledby="r2-tab">
         <DigitsRound :data="data['r2']"></DigitsRound>
+        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div class="tab-pane fade" id="r3" role="tabpanel" aria-labelledby="r3-tab">
         <DigitsRound :data="data['r3']"></DigitsRound>
+        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div class="tab-pane fade" id="r4" role="tabpanel" aria-labelledby="r4-tab">
         <DigitsRound :data="data['r4']"></DigitsRound>
+        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div class="tab-pane fade" id="r5" role="tabpanel" aria-labelledby="r5-tab">
         <DigitsRound :data="data['r5']"></DigitsRound>
+        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div
         class="tab-pane fade text-center mt-5 px-4"
