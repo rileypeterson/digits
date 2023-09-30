@@ -1,66 +1,93 @@
 <script setup lang="ts">
 import DigitsRound from './DigitsRound.vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 // @ts-ignore
 import $ from 'jquery'
 
-
-let dYesterday = { r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
-function getYesterdayData() {
-  $.ajax({
-    url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_yesterday.json',
-    type: 'get',
-    dataType: 'json',
-    crossDomain: true,
-    async: false,
-    success: function (resp: any) {
-      dYesterday = resp
-    }
-  })
-}
-getYesterdayData()
-
-let dTomorrow = { r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
-function getTomorrowData() {
-  $.ajax({
-    url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_tomorrow.json',
-    type: 'get',
-    dataType: 'json',
-    crossDomain: true,
-    async: false,
-    success: function (resp: any) {
-      dTomorrow = resp
-    }
-  })
-}
-getTomorrowData()
-
-// Get the right payload depending on the date
+// Get the localize date string for the player
 let today = new Date()
-let todayString = today.toLocaleDateString()
-let storedDateString = localStorage.getItem("lastVisitDateString")
-let lastData = localStorage.getItem("lastData")
-if (!storedDateString) {
-  // Never been to site
-  localStorage.setItem("lastVisitDateString", todayString)
-  // Set yesterday's data as the last data
-  localStorage.setItem("lastData", JSON.stringify(dYesterday))
-} else {
-  // Been to the site
-  if (todayString === storedDateString && lastData) {
-    // Use last data
-  } else if (todayString !== storedDateString && lastData) {
-    // New day use next data
-    localStorage.setItem("lastData", JSON.stringify(dTomorrow))
-    localStorage.setItem("lastVisitDateString", todayString)
+let todayDate = [
+  today.getFullYear(),
+  ('0' + (today.getMonth() + 1)).slice(-2),
+  ('0' + today.getDate()).slice(-2)
+].join('-')
+let storedDateString = localStorage.getItem('lastVisitDateString')
+let lastData = localStorage.getItem('lastData')
+if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
+  // Never been to site or it's a new date, then the data needs to be update
+  localStorage.setItem('lastVisitDateString', todayDate)
+
+  // Fetch data
+  let dYesterday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
+  function getYesterdayData() {
+    $.ajax({
+      url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_yesterday.json',
+      type: 'get',
+      dataType: 'json',
+      crossDomain: true,
+      async: false,
+      success: function (resp: any) {
+        dYesterday = resp
+      }
+    })
+  }
+  getYesterdayData()
+
+  let dToday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
+  function getTodayData() {
+    $.ajax({
+      url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_today.json',
+      type: 'get',
+      dataType: 'json',
+      crossDomain: true,
+      async: false,
+      success: function (resp: any) {
+        dToday = resp
+      }
+    })
+  }
+  getTodayData()
+
+  let dTomorrow = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
+  function getTomorrowData() {
+    $.ajax({
+      url: 'https://raw.githubusercontent.com/rileypeterson/digits/main/data/data_tomorrow.json',
+      type: 'get',
+      dataType: 'json',
+      crossDomain: true,
+      async: false,
+      success: function (resp: any) {
+        dTomorrow = resp
+      }
+    })
+  }
+  getTomorrowData()
+
+  // Get the date that comes with each payload
+  let dYesterdayDate = dYesterday['puzzleDate']
+  let dTodayDate = dToday['puzzleDate']
+  let dTomorrowDate = dTomorrow['puzzleDate']
+
+  // Get the date which corresponds to the correct date
+  if (todayDate == dYesterdayDate) {
+    localStorage.setItem('puzzleDate', dYesterdayDate)
+    localStorage.setItem('lastData', JSON.stringify(dYesterday))
+  } else if (todayDate == dTodayDate) {
+    localStorage.setItem('puzzleDate', dTodayDate)
+    localStorage.setItem('lastData', JSON.stringify(dToday))
+  } else if (todayDate == dTomorrowDate) {
+    localStorage.setItem('puzzleDate', dTomorrowDate)
+    localStorage.setItem('lastData', JSON.stringify(dTomorrow))
   }
 }
 
-const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
+const data = reactive(JSON.parse(localStorage.getItem('lastData') || '{}'))
+const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
 </script>
 
 <template>
   <div class="container-fluid w-100">
+    <div class="text-center">{{ puzzleDate }}</div>
     <ul class="nav nav-tabs justify-content-center row px-0 mx-0" id="myTab" role="tablist">
       <li class="nav-item col-4 col-md-2" role="presentation">
         <button
@@ -176,10 +203,11 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
         aria-labelledby="about-tab"
       >
         I loved to play the New York Times Digits game. Unfortunately, it was
-        <a target="_blank" href="https://www.nytimes.com/games/digits">discontinued</a>. So, I built this version of
-        it.
-        <br>
-        The source code is available <a target="_blank" href="https://github.com/rileypeterson/digits">here</a>.
+        <a target="_blank" href="https://www.nytimes.com/games/digits">discontinued</a>. So, I built
+        this version of it.
+        <br />
+        The source code is available
+        <a target="_blank" href="https://github.com/rileypeterson/digits">here</a>.
       </div>
     </div>
   </div>
@@ -205,7 +233,6 @@ const data = reactive(JSON.parse(localStorage.getItem("lastData") || "{}"))
   .container-fluid {
     padding-left: 10%;
     padding-right: 10%;
-
   }
 }
 

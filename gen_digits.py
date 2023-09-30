@@ -2,6 +2,7 @@ import random
 from itertools import product, permutations
 import json
 import shutil
+import datetime
 
 
 def calc(m, c_low, c_high, t_low, t_high, t_prob_thresh):
@@ -76,7 +77,11 @@ def calc(m, c_low, c_high, t_low, t_high, t_prob_thresh):
 
 
 def write_digits(filepath):
-    d = {}
+    d = {
+        "puzzleDate": (
+            datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        ).strftime("%Y-%m-%d")
+    }
     # Range from 2, 30
     # Round 1:
     # Composite: [2, 15]
@@ -184,5 +189,8 @@ def write_digits(filepath):
 
 
 if __name__ == "__main__":
-    shutil.copyfile("data/data_tomorrow.json", "data/data_yesterday.json")
+    # today --> yesterday
+    shutil.copyfile("data/data_today.json", "data/data_yesterday.json")
+    # tomorrow --> today
+    shutil.copyfile("data/data_tomorrow.json", "data/data_today.json")
     write_digits("data/data_tomorrow.json")
