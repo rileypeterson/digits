@@ -18,7 +18,7 @@ if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
   localStorage.setItem('lastVisitDateString', todayDate)
 
   // Fetch data
-  let branch = "7-two-players-in-the-same-timezone-should-have-the-same-puzzle"
+  let branch = "main"
   let dYesterday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
   function getYesterdayData() {
     $.ajax({
