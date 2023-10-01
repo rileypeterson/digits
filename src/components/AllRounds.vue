@@ -147,7 +147,7 @@ onMounted(() => {
             <img
               id="r1-complete"
               v-bind:class="r1Complete ? 'scale align-top' : 'scale align-top d-none'"
-              src="src/assets/images/check-mark.png"
+              src="@/assets/images/check-mark.png"
             />
           </p>
         </button>
@@ -169,7 +169,7 @@ onMounted(() => {
             <img
               id="r2-complete"
               v-bind:class="r2Complete ? 'scale align-top' : 'scale align-top d-none'"
-              src="src/assets/images/check-mark.png"
+              src="@/assets/images/check-mark.png"
             />
           </p>
         </button>
@@ -191,7 +191,7 @@ onMounted(() => {
             <img
               id="r3-complete"
               v-bind:class="r3Complete ? 'scale align-top' : 'scale align-top d-none'"
-              src="src/assets/images/check-mark.png"
+              src="@/assets/images/check-mark.png"
             />
           </p>
         </button>
@@ -213,7 +213,7 @@ onMounted(() => {
             <img
               id="r4-complete"
               v-bind:class="r4Complete ? 'scale align-top' : 'scale align-top d-none'"
-              src="src/assets/images/check-mark.png"
+              src="@/assets/images/check-mark.png"
             />
           </p>
         </button>
@@ -235,7 +235,7 @@ onMounted(() => {
             <img
               id="r5-complete"
               v-bind:class="r5Complete ? 'scale align-top' : 'scale align-top d-none'"
-              src="src/assets/images/check-mark.png"
+              src="@/assets/images/check-mark.png"
             />
           </p>
         </button>
