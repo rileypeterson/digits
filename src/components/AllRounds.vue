@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DigitsRound from './DigitsRound.vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 // @ts-ignore
 import $ from 'jquery'
 
@@ -13,16 +13,24 @@ let todayDate = [
 ].join('-')
 let storedDateString = localStorage.getItem('lastVisitDateString')
 let lastData = localStorage.getItem('lastData')
-if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
+if (!storedDateString || (todayDate !== storedDateString && lastData)) {
   // Never been to site or it's a new date, then the data needs to be update
   localStorage.setItem('lastVisitDateString', todayDate)
+  localStorage.setItem('r1Complete', 'false')
+  localStorage.setItem('r2Complete', 'false')
+  localStorage.setItem('r3Complete', 'false')
+  localStorage.setItem('r4Complete', 'false')
+  localStorage.setItem('r5Complete', 'false')
 
   // Fetch data
-  let branch = "main"
+  let branch = 'main'
   let dYesterday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
   function getYesterdayData() {
     $.ajax({
-      url: 'https://raw.githubusercontent.com/rileypeterson/digits/' + branch + '/data/data_yesterday.json',
+      url:
+        'https://raw.githubusercontent.com/rileypeterson/digits/' +
+        branch +
+        '/data/data_yesterday.json',
       type: 'get',
       dataType: 'json',
       crossDomain: true,
@@ -37,7 +45,10 @@ if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
   let dToday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
   function getTodayData() {
     $.ajax({
-      url: 'https://raw.githubusercontent.com/rileypeterson/digits/' + branch + '/data/data_today.json',
+      url:
+        'https://raw.githubusercontent.com/rileypeterson/digits/' +
+        branch +
+        '/data/data_today.json',
       type: 'get',
       dataType: 'json',
       crossDomain: true,
@@ -52,7 +63,10 @@ if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
   let dTomorrow = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
   function getTomorrowData() {
     $.ajax({
-      url: 'https://raw.githubusercontent.com/rileypeterson/digits/' + branch + '/data/data_tomorrow.json',
+      url:
+        'https://raw.githubusercontent.com/rileypeterson/digits/' +
+        branch +
+        '/data/data_tomorrow.json',
       type: 'get',
       dataType: 'json',
       crossDomain: true,
@@ -84,10 +98,37 @@ if (!storedDateString || ((todayDate !== storedDateString) && lastData)) {
 
 const data = reactive(JSON.parse(localStorage.getItem('lastData') || '{}'))
 const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
+const r1Complete = ref((localStorage.getItem('r1Complete') || 'false') === 'true')
+const r2Complete = ref((localStorage.getItem('r2Complete') || 'false') === 'true')
+const r3Complete = ref((localStorage.getItem('r3Complete') || 'false') === 'true')
+const r4Complete = ref((localStorage.getItem('r4Complete') || 'false') === 'true')
+const r5Complete = ref((localStorage.getItem('r5Complete') || 'false') === 'true')
+
+function advanceToNextRound() {
+  if ((localStorage.getItem('r1Complete') || 'false') === 'false') {
+    document.getElementById('r1-tab')?.click()
+  } else if ((localStorage.getItem('r2Complete') || 'false') === 'false') {
+    document.getElementById('r2-tab')?.click()
+  } else if ((localStorage.getItem('r3Complete') || 'false') === 'false') {
+    document.getElementById('r3-tab')?.click()
+  } else if ((localStorage.getItem('r4Complete') || 'false') === 'false') {
+    document.getElementById('r4-tab')?.click()
+  } else if ((localStorage.getItem('r5Complete') || 'false') === 'false') {
+    document.getElementById('r5-tab')?.click()
+  } else {
+    document.getElementById('r5-tab')?.click()
+  }
+}
+
+// After mounted get the right round
+onMounted(() => {
+  advanceToNextRound()
+})
 </script>
 
 <template>
   <div class="container-fluid w-100">
+    <div class="text-center">{{ puzzleDate }}</div>
     <ul class="nav nav-tabs justify-content-center row px-0 mx-0" id="myTab" role="tablist">
       <li class="nav-item col-4 col-md-2" role="presentation">
         <button
@@ -101,7 +142,14 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
           aria-selected="true"
           style="color: var(--round-green)"
         >
-          Round 1
+          <p class="m-0 p-0">
+            Round 1
+            <img
+              id="r1-complete"
+              v-bind:class="r1Complete ? 'scale align-top' : 'scale align-top d-none'"
+              src="src/assets/images/check-mark.png"
+            />
+          </p>
         </button>
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
@@ -116,7 +164,14 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
           aria-selected="false"
           style="color: var(--round-green)"
         >
-          Round 2
+          <p class="m-0 p-0">
+            Round 2
+            <img
+              id="r2-complete"
+              v-bind:class="r2Complete ? 'scale align-top' : 'scale align-top d-none'"
+              src="src/assets/images/check-mark.png"
+            />
+          </p>
         </button>
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
@@ -131,7 +186,14 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
           aria-selected="false"
           style="color: var(--round-green)"
         >
-          Round 3
+          <p class="m-0 p-0">
+            Round 3
+            <img
+              id="r3-complete"
+              v-bind:class="r3Complete ? 'scale align-top' : 'scale align-top d-none'"
+              src="src/assets/images/check-mark.png"
+            />
+          </p>
         </button>
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
@@ -146,7 +208,14 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
           aria-selected="false"
           style="color: var(--round-green)"
         >
-          Round 4
+          <p class="m-0 p-0">
+            Round 4
+            <img
+              id="r4-complete"
+              v-bind:class="r4Complete ? 'scale align-top' : 'scale align-top d-none'"
+              src="src/assets/images/check-mark.png"
+            />
+          </p>
         </button>
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
@@ -161,7 +230,14 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
           aria-selected="false"
           style="color: var(--round-green)"
         >
-          Round 5
+          <p class="m-0 p-0">
+            Round 5
+            <img
+              id="r5-complete"
+              v-bind:class="r5Complete ? 'scale align-top' : 'scale align-top d-none'"
+              src="src/assets/images/check-mark.png"
+            />
+          </p>
         </button>
       </li>
       <li class="nav-item col-4 col-md-2" role="presentation">
@@ -183,23 +259,18 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="r1" role="tabpanel" aria-labelledby="r1-tab">
         <DigitsRound :data="data['r1']"></DigitsRound>
-        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div class="tab-pane fade" id="r2" role="tabpanel" aria-labelledby="r2-tab">
         <DigitsRound :data="data['r2']"></DigitsRound>
-        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div class="tab-pane fade" id="r3" role="tabpanel" aria-labelledby="r3-tab">
         <DigitsRound :data="data['r3']"></DigitsRound>
-        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div class="tab-pane fade" id="r4" role="tabpanel" aria-labelledby="r4-tab">
         <DigitsRound :data="data['r4']"></DigitsRound>
-        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div class="tab-pane fade" id="r5" role="tabpanel" aria-labelledby="r5-tab">
         <DigitsRound :data="data['r5']"></DigitsRound>
-        <div class="text-center">{{ puzzleDate }}</div>
       </div>
       <div
         class="tab-pane fade text-center mt-5 px-4"
@@ -219,6 +290,11 @@ const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
 </template>
 
 <style scoped>
+.scale {
+  height: auto;
+  width: 1.5em;
+}
+
 .nav-link {
   font-size: 1.2rem;
 }

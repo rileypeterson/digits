@@ -1,34 +1,59 @@
 <script setup lang="ts">
 import NumberCircle from './NumberCircle.vue'
 import OperatorCircle from './OperatorCircle.vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { confetti } from 'tsparticles-confetti'
+// @ts-ignore
+import $ from 'jquery'
 
 const props = defineProps({
   data: Object
 })
+
+const round = ref(props?.data?.round)
 
 // The circles that the user picks and in what order
 const firstCircle = ref('')
 const secondCircle = ref('')
 const selectedOp = ref('')
 
+const opMap = {
+  times: '*',
+  divide: '÷',
+  minus: '-',
+  plus: '+'
+}
+
 // https://devblogs.microsoft.com/typescript/announcing-typescript-3-7-beta/#optional-chaining
 // Receive the actual values for each circle from the AllRounds.vue parent
 const target = ref(props?.data?.target)
-const upperLeft = ref(props?.data?.n[0])
-const upperCenter = ref(props?.data?.n[1])
-const upperRight = ref(props?.data?.n[2])
-const lowerLeft = ref(props?.data?.n[3])
-const lowerCenter = ref(props?.data?.n[4])
-const lowerRight = ref(props?.data?.n[5])
-const round = ref(props?.data?.round)
+const upperLeft = ref(localStorage.getItem('r' + round.value + 'upperLeft') || props?.data?.n[0])
+const upperCenter = ref(
+  localStorage.getItem('r' + round.value + 'upperCenter') || props?.data?.n[1]
+)
+const upperRight = ref(localStorage.getItem('r' + round.value + 'upperRight') || props?.data?.n[2])
+const lowerLeft = ref(localStorage.getItem('r' + round.value + 'lowerLeft') || props?.data?.n[3])
+const lowerCenter = ref(
+  localStorage.getItem('r' + round.value + 'lowerCenter') || props?.data?.n[4]
+)
+const lowerRight = ref(localStorage.getItem('r' + round.value + 'lowerRight') || props?.data?.n[5])
+const expressions = reactive(
+  JSON.parse(localStorage.getItem('r' + round.value + 'Expressions') || '[]')
+)
+
+upperLeft.value = parseInt(upperLeft.value)
+upperCenter.value = parseInt(upperCenter.value)
+upperRight.value = parseInt(upperRight.value)
+lowerLeft.value = parseInt(lowerLeft.value)
+lowerCenter.value = parseInt(lowerCenter.value)
+lowerRight.value = parseInt(lowerRight.value)
 
 // Used in merge animation
 const t1 = ref('0%')
 const t2 = ref('0%')
 
 // State data
+let cachedNumbers = JSON.parse(localStorage.getItem('r' + round.value + 'Numbers') || '{}')
 const numbers: any = reactive({
   upperLeft: { v: upperLeft, isClicked: false, isVisible: true, isShaked: false },
   upperCenter: { v: upperCenter, isClicked: false, isVisible: true, isShaked: false },
@@ -37,6 +62,36 @@ const numbers: any = reactive({
   lowerCenter: { v: lowerCenter, isClicked: false, isVisible: true, isShaked: false },
   lowerRight: { v: lowerRight, isClicked: false, isVisible: true, isShaked: false }
 })
+if (!$.isEmptyObject(cachedNumbers)) {
+  numbers['upperLeft']['v'] = upperLeft
+  numbers['upperCenter']['v'] = upperCenter
+  numbers['upperRight']['v'] = upperRight
+  numbers['lowerLeft']['v'] = lowerLeft
+  numbers['lowerCenter']['v'] = lowerCenter
+  numbers['lowerRight']['v'] = lowerRight
+
+  numbers['upperLeft']['isClicked'] = cachedNumbers['upperLeft']['isClicked']
+  numbers['upperCenter']['isClicked'] = cachedNumbers['upperCenter']['isClicked']
+  numbers['upperRight']['isClicked'] = cachedNumbers['upperRight']['isClicked']
+  numbers['lowerLeft']['isClicked'] = cachedNumbers['lowerLeft']['isClicked']
+  numbers['lowerCenter']['isClicked'] = cachedNumbers['lowerCenter']['isClicked']
+  numbers['lowerRight']['isClicked'] = cachedNumbers['lowerRight']['isClicked']
+
+  numbers['upperLeft']['isVisible'] = cachedNumbers['upperLeft']['isVisible']
+  numbers['upperCenter']['isVisible'] = cachedNumbers['upperCenter']['isVisible']
+  numbers['upperRight']['isVisible'] = cachedNumbers['upperRight']['isVisible']
+  numbers['lowerLeft']['isVisible'] = cachedNumbers['lowerLeft']['isVisible']
+  numbers['lowerCenter']['isVisible'] = cachedNumbers['lowerCenter']['isVisible']
+  numbers['lowerRight']['isVisible'] = cachedNumbers['lowerRight']['isVisible']
+
+  numbers['upperLeft']['isShaked'] = cachedNumbers['upperLeft']['isShaked']
+  numbers['upperCenter']['isShaked'] = cachedNumbers['upperCenter']['isShaked']
+  numbers['upperRight']['isShaked'] = cachedNumbers['upperRight']['isShaked']
+  numbers['lowerLeft']['isShaked'] = cachedNumbers['lowerLeft']['isShaked']
+  numbers['lowerCenter']['isShaked'] = cachedNumbers['lowerCenter']['isShaked']
+  numbers['lowerRight']['isShaked'] = cachedNumbers['lowerRight']['isShaked']
+}
+let cachedOps = JSON.parse(localStorage.getItem('r' + round.value + 'Ops') || '{}')
 const ops: any = reactive({
   refresh: { isClicked: false, isShaked: false },
   plus: { isClicked: false, isShaked: false },
@@ -56,7 +111,8 @@ let h0 = {
   upperRight: upperRight.value,
   lowerLeft: lowerLeft.value,
   lowerCenter: lowerCenter.value,
-  lowerRight: lowerRight.value
+  lowerRight: lowerRight.value,
+  expressions: JSON.parse(JSON.stringify(expressions))
 }
 let history = [h0]
 
@@ -88,6 +144,8 @@ function applyOp(fc: number, op: string, sc: number) {
   if (res >= 0 && Number.isInteger(res)) {
     setTimeout(function () {
       mapCircleToValue(secondCircle.value).value = res
+      // @ts-ignore
+      expressions.push(fc + ' ' + opMap[op] + ' ' + sc + ' = ' + res)
       checkWinner()
     }, 400)
     return true
@@ -161,10 +219,40 @@ function checkWinner() {
       spread: 70,
       origin: { y: 0.6 }
     })
+    localStorage.setItem('r' + round.value + 'Expressions', JSON.stringify(expressions))
+    localStorage.setItem('r' + round.value + 'Numbers', JSON.stringify(numbers))
+    localStorage.setItem('r' + round.value + 'Ops', JSON.stringify(ops))
+    localStorage.setItem('r' + round.value + 'upperLeft', upperLeft.value)
+    localStorage.setItem('r' + round.value + 'upperCenter', upperCenter.value)
+    localStorage.setItem('r' + round.value + 'upperRight', upperRight.value)
+    localStorage.setItem('r' + round.value + 'lowerLeft', lowerLeft.value)
+    localStorage.setItem('r' + round.value + 'lowerCenter', lowerCenter.value)
+    localStorage.setItem('r' + round.value + 'lowerRight', lowerRight.value)
+
     setTimeout(() => {
-      if (round.value < 5) {
-        let next_round = 'r' + (round.value + 1) + '-tab'
-        document.getElementById(next_round)?.click()
+      localStorage.setItem('r' + round.value + 'Complete', 'true')
+      $('#r' + round.value + '-complete').removeClass('d-none')
+      if (
+        (localStorage.getItem('r1Complete') || 'false') === 'true' &&
+        (localStorage.getItem('r2Complete') || 'false') === 'true' &&
+        (localStorage.getItem('r3Complete') || 'false') === 'true' &&
+        (localStorage.getItem('r4Complete') || 'false') === 'true' &&
+        (localStorage.getItem('r5Complete') || 'false') === 'true'
+      ) {
+        // If all rounds complete go to round 5
+        document.getElementById('r5-tab')?.click()
+      } else {
+        let nextRound = (round.value % 5) + 1
+        for (let j = 0; j <= 5; j++) {
+          if ((localStorage.getItem('r' + nextRound + 'Complete') || 'false') === 'true') {
+            // If nextRound is completed:
+            nextRound = (nextRound % 5) + 1
+          } else {
+            break
+          }
+        }
+        nextRound = Math.min(nextRound, 5)
+        document.getElementById('r' + nextRound + '-tab')?.click()
       }
     }, 2200)
   }
@@ -172,6 +260,22 @@ function checkWinner() {
 
 function fullReset(this: any, cell: string) {
   if (isOp(cell) && cell === 'refresh') {
+    let maybeRefresh = false
+    if (localStorage.getItem('r' + round.value + 'Complete') === 'true') {
+      // Remove the local storage
+      localStorage.removeItem('r' + round.value + 'Expressions')
+      localStorage.removeItem('r' + round.value + 'Numbers')
+      localStorage.removeItem('r' + round.value + 'Ops')
+      localStorage.removeItem('r' + round.value + 'upperLeft')
+      localStorage.removeItem('r' + round.value + 'upperCenter')
+      localStorage.removeItem('r' + round.value + 'upperRight')
+      localStorage.removeItem('r' + round.value + 'lowerLeft')
+      localStorage.removeItem('r' + round.value + 'lowerCenter')
+      localStorage.removeItem('r' + round.value + 'lowerRight')
+      localStorage.setItem('r' + round.value + 'Complete', 'false')
+      maybeRefresh = true
+    }
+
     while (history.length > 1) {
       history.pop()
     }
@@ -183,6 +287,9 @@ function fullReset(this: any, cell: string) {
       for (let k in ops) {
         for (let j in ops[k]) ops[k][j] = h?.ops[k][j]
       }
+      for (let k in expressions) {
+        expressions[k] = h?.expressions[k]
+      }
       firstCircle.value = h?.firstCircle || ''
       secondCircle.value = h?.secondCircle || ''
       selectedOp.value = h?.selectedOp || ''
@@ -192,6 +299,9 @@ function fullReset(this: any, cell: string) {
       lowerLeft.value = h?.lowerLeft || ''
       lowerCenter.value = h?.lowerCenter || ''
       lowerRight.value = h?.lowerRight || ''
+    }
+    if (maybeRefresh) {
+      location.reload()
     }
   }
   return
@@ -207,6 +317,9 @@ function handleClick(cell: string) {
       }
       for (let k in ops) {
         for (let j in ops[k]) ops[k][j] = h?.ops[k][j]
+      }
+      for (let k in expressions) {
+        expressions[k] = h?.expressions[k]
       }
       firstCircle.value = h?.firstCircle || ''
       secondCircle.value = h?.secondCircle || ''
@@ -232,7 +345,8 @@ function handleClick(cell: string) {
     upperRight: upperRight.value,
     lowerLeft: lowerLeft.value,
     lowerCenter: lowerCenter.value,
-    lowerRight: lowerRight.value
+    lowerRight: lowerRight.value,
+    expressions: JSON.parse(JSON.stringify(expressions))
   }
   history.push(h0)
 
@@ -347,6 +461,22 @@ function handleClick(cell: string) {
   }
   console.log('unaccounted')
 }
+
+// After mounted get the right round
+onMounted(() => {
+  if (localStorage.getItem('r' + round.value + 'Complete') === 'true') {
+    (document.getElementById("upperRight") as HTMLButtonElement).disabled = true;
+    (document.getElementById("upperCenter") as HTMLButtonElement).disabled = true;
+    (document.getElementById("upperLeft") as HTMLButtonElement).disabled = true;
+    (document.getElementById("lowerLeft") as HTMLButtonElement).disabled = true;
+    (document.getElementById("lowerCenter") as HTMLButtonElement).disabled = true;
+    (document.getElementById("lowerRight") as HTMLButtonElement).disabled = true;
+    (document.getElementById("plus") as HTMLButtonElement).disabled = true;
+    (document.getElementById("minus") as HTMLButtonElement).disabled = true;
+    (document.getElementById("times") as HTMLButtonElement).disabled = true;
+    (document.getElementById("divide") as HTMLButtonElement).disabled = true;
+  }
+})
 </script>
 
 <template>
@@ -356,6 +486,7 @@ function handleClick(cell: string) {
     </div>
     <div class="row justify-content-center mb-2">
       <NumberCircle
+        id="upperLeft"
         :v="upperLeft"
         :class="{
           green: numbers.upperLeft.isClicked,
@@ -365,6 +496,7 @@ function handleClick(cell: string) {
         @click="handleClick('upperLeft')"
       ></NumberCircle>
       <NumberCircle
+        id="upperCenter"
         :v="upperCenter"
         :class="{
           green: numbers.upperCenter.isClicked,
@@ -374,6 +506,7 @@ function handleClick(cell: string) {
         @click="handleClick('upperCenter')"
       ></NumberCircle>
       <NumberCircle
+        id="upperRight"
         :v="upperRight"
         :class="{
           green: numbers.upperRight.isClicked,
@@ -385,6 +518,7 @@ function handleClick(cell: string) {
     </div>
     <div class="row justify-content-center mb-3">
       <NumberCircle
+        id="lowerLeft"
         :v="lowerLeft"
         :class="{
           green: numbers.lowerLeft.isClicked,
@@ -394,6 +528,7 @@ function handleClick(cell: string) {
         @click="handleClick('lowerLeft')"
       ></NumberCircle>
       <NumberCircle
+        id="lowerCenter"
         :v="lowerCenter"
         :class="{
           green: numbers.lowerCenter.isClicked,
@@ -403,6 +538,7 @@ function handleClick(cell: string) {
         @click="handleClick('lowerCenter')"
       ></NumberCircle>
       <NumberCircle
+        id="lowerRight"
         :v="lowerRight"
         :class="{
           green: numbers.lowerRight.isClicked,
@@ -420,21 +556,25 @@ function handleClick(cell: string) {
         @dblclick="fullReset('refresh')"
       ></OperatorCircle>
       <OperatorCircle
+        id="plus"
         op="&plus;"
         :class="{ green: ops.plus.isClicked, shaking: ops.plus.isShaked }"
         @click="handleClick('plus')"
       ></OperatorCircle>
       <OperatorCircle
+        id="minus"
         op="&minus;"
         :class="{ green: ops.minus.isClicked, shaking: ops.minus.isShaked }"
         @click="handleClick('minus')"
       ></OperatorCircle>
       <OperatorCircle
+        id="times"
         op="&times;"
         :class="{ green: ops.times.isClicked, shaking: ops.times.isShaked }"
         @click="handleClick('times')"
       ></OperatorCircle>
       <OperatorCircle
+        id="divide"
         op="&divide;"
         :class="{ green: ops.divide.isClicked, shaking: ops.divide.isShaked }"
         @click="handleClick('divide')"
@@ -443,6 +583,11 @@ function handleClick(cell: string) {
     <!-- <div class="row justify-content-center">
       <button type="button" class="btn btn-outline-secondary w-25">Submit</button>
     </div> -->
+    <ul class="mx-auto text-center p-0 m-0">
+      <li class="mx-auto text-center" v-for="expression in expressions" :key="expression">
+        {{ expression }}
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -459,6 +604,15 @@ function handleClick(cell: string) {
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
+}
+
+ul > li {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 @keyframes shake {
@@ -494,8 +648,6 @@ function handleClick(cell: string) {
   text-align: center;
   background: #ffffff;
 }
-
-
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
