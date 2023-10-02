@@ -15,6 +15,7 @@ let storedDateString = localStorage.getItem('lastVisitDateString')
 let lastData = localStorage.getItem('lastData')
 if (!storedDateString || (todayDate !== storedDateString && lastData)) {
   // Never been to site or it's a new date, then the data needs to be update
+  localStorage.clear();
   localStorage.setItem('lastVisitDateString', todayDate)
   localStorage.setItem('r1Complete', 'false')
   localStorage.setItem('r2Complete', 'false')
