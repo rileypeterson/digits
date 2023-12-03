@@ -22,6 +22,11 @@ if (!storedDateString || (todayDate !== storedDateString && lastData)) {
   localStorage.setItem('r3Complete', 'false')
   localStorage.setItem('r4Complete', 'false')
   localStorage.setItem('r5Complete', 'false')
+  localStorage.setItem('r1Failed', 'false')
+  localStorage.setItem('r2Failed', 'false')
+  localStorage.setItem('r3Failed', 'false')
+  localStorage.setItem('r4Failed', 'false')
+  localStorage.setItem('r5Failed', 'false')
 
   // Fetch data
   let branch = 'main'
@@ -104,17 +109,22 @@ const r2Complete = ref((localStorage.getItem('r2Complete') || 'false') === 'true
 const r3Complete = ref((localStorage.getItem('r3Complete') || 'false') === 'true')
 const r4Complete = ref((localStorage.getItem('r4Complete') || 'false') === 'true')
 const r5Complete = ref((localStorage.getItem('r5Complete') || 'false') === 'true')
+const r1Failed = ref((localStorage.getItem('r1Failed') || 'false') === 'true')
+const r2Failed = ref((localStorage.getItem('r2Failed') || 'false') === 'true')
+const r3Failed = ref((localStorage.getItem('r3Failed') || 'false') === 'true')
+const r4Failed = ref((localStorage.getItem('r4Failed') || 'false') === 'true')
+const r5Failed = ref((localStorage.getItem('r5Failed') || 'false') === 'true')
 
 function advanceToNextRound() {
-  if ((localStorage.getItem('r1Complete') || 'false') === 'false') {
+  if (((localStorage.getItem('r1Complete') || 'false') === 'false') && ((localStorage.getItem('r1Failed') || 'false') === 'false')) {
     document.getElementById('r1-tab')?.click()
-  } else if ((localStorage.getItem('r2Complete') || 'false') === 'false') {
+  } else if (((localStorage.getItem('r2Complete') || 'false') === 'false') && ((localStorage.getItem('r2Failed') || 'false') === 'false')) {
     document.getElementById('r2-tab')?.click()
-  } else if ((localStorage.getItem('r3Complete') || 'false') === 'false') {
+  } else if (((localStorage.getItem('r3Complete') || 'false') === 'false') && ((localStorage.getItem('r3Failed') || 'false') === 'false')) {
     document.getElementById('r3-tab')?.click()
-  } else if ((localStorage.getItem('r4Complete') || 'false') === 'false') {
+  } else if (((localStorage.getItem('r4Complete') || 'false') === 'false') && ((localStorage.getItem('r4Failed') || 'false') === 'false')) {
     document.getElementById('r4-tab')?.click()
-  } else if ((localStorage.getItem('r5Complete') || 'false') === 'false') {
+  } else if (((localStorage.getItem('r5Complete') || 'false') === 'false') && ((localStorage.getItem('r5Failed') || 'false') === 'false')) {
     document.getElementById('r5-tab')?.click()
   } else {
     document.getElementById('r5-tab')?.click()
@@ -131,7 +141,7 @@ onMounted(() => {
   <div class="container-fluid w-100">
     <div class="text-center">{{ puzzleDate }}</div>
     <ul class="nav nav-tabs justify-content-center row px-0 mx-0" id="myTab" role="tablist">
-      <li class="nav-item col-4 col-md-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2" role="presentation">
         <button
           class="nav-link active text-nowrap mx-auto"
           id="r1-tab"
@@ -150,10 +160,15 @@ onMounted(() => {
               v-bind:class="r1Complete ? 'scale align-top' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
+            <img
+              id="r1-failed"
+              v-bind:class="r1Failed ? 'scale align-top' : 'scale align-top d-none'"
+              src="@/assets/images/red-x.png"
+            />
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-md-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="r2-tab"
@@ -172,10 +187,15 @@ onMounted(() => {
               v-bind:class="r2Complete ? 'scale align-top' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
+            <img
+              id="r2-failed"
+              v-bind:class="r2Failed ? 'scale align-top' : 'scale align-top d-none'"
+              src="@/assets/images/red-x.png"
+            />
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-md-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="r3-tab"
@@ -194,10 +214,15 @@ onMounted(() => {
               v-bind:class="r3Complete ? 'scale align-top' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
+            <img
+              id="r3-failed"
+              v-bind:class="r3Failed ? 'scale align-top' : 'scale align-top d-none'"
+              src="@/assets/images/red-x.png"
+            />
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-md-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="r4-tab"
@@ -216,10 +241,15 @@ onMounted(() => {
               v-bind:class="r4Complete ? 'scale align-top' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
+            <img
+              id="r4-failed"
+              v-bind:class="r4Failed ? 'scale align-top' : 'scale align-top d-none'"
+              src="@/assets/images/red-x.png"
+            />
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-md-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="r5-tab"
@@ -238,10 +268,15 @@ onMounted(() => {
               v-bind:class="r5Complete ? 'scale align-top' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
+            <img
+              id="r5-failed"
+              v-bind:class="r5Failed ? 'scale align-top' : 'scale align-top d-none'"
+              src="@/assets/images/red-x.png"
+            />
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-md-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="about-tab"

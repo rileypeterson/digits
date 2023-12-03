@@ -16,6 +16,7 @@ const round = ref(props?.data?.round)
 const firstCircle = ref('')
 const secondCircle = ref('')
 const selectedOp = ref('')
+const solutionRevealed = ref(false)
 
 const opMap = {
   times: '*',
@@ -40,6 +41,10 @@ const lowerRight = ref(localStorage.getItem('r' + round.value + 'lowerRight') ||
 const expressions = reactive(
   JSON.parse(localStorage.getItem('r' + round.value + 'Expressions') || '[]')
 )
+const solutions: Array<string> = reactive(Object.values(props?.data?.how[target.value] || {}))
+solutions.sort(function (a: string, b: string) {
+  return a.length - b.length
+})
 
 upperLeft.value = parseInt(upperLeft.value)
 upperCenter.value = parseInt(upperCenter.value)
@@ -212,13 +217,22 @@ function setMergeAnimation(c1: string, c2: string) {
   }
 }
 
+function surrendered() {
+  solutionRevealed.value = true
+  localStorage.setItem('r' + round.value + 'Failed', 'true')
+  $('#r' + round.value + '-failed').removeClass('d-none')
+}
+
 function checkWinner() {
   if (mapCircleToValue(firstCircle.value).value === target.value) {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    })
+    if (!solutionRevealed.value) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      })
+    }
+
     localStorage.setItem('r' + round.value + 'Expressions', JSON.stringify(expressions))
     localStorage.setItem('r' + round.value + 'Numbers', JSON.stringify(numbers))
     localStorage.setItem('r' + round.value + 'Ops', JSON.stringify(ops))
@@ -230,8 +244,10 @@ function checkWinner() {
     localStorage.setItem('r' + round.value + 'lowerRight', lowerRight.value)
 
     setTimeout(() => {
-      localStorage.setItem('r' + round.value + 'Complete', 'true')
-      $('#r' + round.value + '-complete').removeClass('d-none')
+      if (!solutionRevealed.value) {
+        localStorage.setItem('r' + round.value + 'Complete', 'true')
+        $('#r' + round.value + '-complete').removeClass('d-none')
+      }
       if (
         (localStorage.getItem('r1Complete') || 'false') === 'true' &&
         (localStorage.getItem('r2Complete') || 'false') === 'true' &&
@@ -244,7 +260,10 @@ function checkWinner() {
       } else {
         let nextRound = (round.value % 5) + 1
         for (let j = 0; j <= 5; j++) {
-          if ((localStorage.getItem('r' + nextRound + 'Complete') || 'false') === 'true') {
+          if (
+            (localStorage.getItem('r' + nextRound + 'Complete') || 'false') === 'true' ||
+            (localStorage.getItem('r' + nextRound + 'Failed') || 'false') === 'true'
+          ) {
             // If nextRound is completed:
             nextRound = (nextRound % 5) + 1
           } else {
@@ -465,16 +484,16 @@ function handleClick(cell: string) {
 // After mounted get the right round
 onMounted(() => {
   if (localStorage.getItem('r' + round.value + 'Complete') === 'true') {
-    (document.getElementById("upperRight") as HTMLButtonElement).disabled = true;
-    (document.getElementById("upperCenter") as HTMLButtonElement).disabled = true;
-    (document.getElementById("upperLeft") as HTMLButtonElement).disabled = true;
-    (document.getElementById("lowerLeft") as HTMLButtonElement).disabled = true;
-    (document.getElementById("lowerCenter") as HTMLButtonElement).disabled = true;
-    (document.getElementById("lowerRight") as HTMLButtonElement).disabled = true;
-    (document.getElementById("plus") as HTMLButtonElement).disabled = true;
-    (document.getElementById("minus") as HTMLButtonElement).disabled = true;
-    (document.getElementById("times") as HTMLButtonElement).disabled = true;
-    (document.getElementById("divide") as HTMLButtonElement).disabled = true;
+    ;(document.getElementById('upperRight') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('upperCenter') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('upperLeft') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('lowerLeft') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('lowerCenter') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('lowerRight') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('plus') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('minus') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('times') as HTMLButtonElement).disabled = true
+    ;(document.getElementById('divide') as HTMLButtonElement).disabled = true
   }
 })
 </script>
@@ -583,11 +602,27 @@ onMounted(() => {
     <!-- <div class="row justify-content-center">
       <button type="button" class="btn btn-outline-secondary w-25">Submit</button>
     </div> -->
-    <ul class="mx-auto text-center p-0 m-0">
-      <li class="mx-auto text-center" v-for="expression in expressions" :key="expression">
+    <div class="mx-auto text-center">
+      <div class="mx-auto text-center" v-for="expression in expressions" :key="expression">
         {{ expression }}
-      </li>
-    </ul>
+      </div>
+    </div>
+    <div class="mx-auto text-center" v-if="solutionRevealed">
+      <div class="mx-auto text-center" style="font-weight: bold">Solutions:</div>
+      <div class="mx-auto text-center" v-for="n in 5">
+        {{ solutions[n] }}
+      </div>
+    </div>
+    <div class="mb-5 mx-auto text-center list-unstyled" v-else>
+      <button
+        type="button"
+        class="mx-auto text-center btn border"
+        style="color: var(--round-green)"
+        @click="surrendered"
+      >
+        Reveal Solution
+      </button>
+    </div>
   </div>
 </template>
 
@@ -604,15 +639,6 @@ onMounted(() => {
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
-}
-
-ul > li {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
 }
 
 @keyframes shake {

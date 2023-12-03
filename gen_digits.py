@@ -3,15 +3,41 @@ from itertools import product, permutations
 import json
 import shutil
 import datetime
+import time
+
+
+def gen_nums(m, c_low, c_high):
+    n = []
+    odd_count = 0
+    even_count = 0
+    while len(set(n)) < m:
+        i = random.randint(c_low, c_high)
+        if len(n) == 0 or (
+            i not in n
+            and (
+                ((i % 2 == 0) and (even_count <= 3)) or ((i % 2 == 1) and (odd_count <= 3))
+            )
+            # (min(abs(x - i) for x in n) > 1)
+        ):
+            n.append(i)
+            if (i % 2) == 0:
+                even_count += 1
+            else:
+                odd_count += 1
+    sep_count = 0
+    sorted_n = sorted(n)
+    for i in range(len(n) - 1):
+        for j in range(len(n) - 1):
+            if abs(sorted_n[i] - sorted_n[j + 1]) == 1:
+                sep_count += 1
+    if sep_count >= 3:
+        return gen_nums(m, c_low, c_high)  
+    return n
 
 
 def calc(m, c_low, c_high, t_low, t_high, t_prob_thresh):
     # Get a set of composite numbers
-    n = []
-    while len(set(n)) < m:
-        i = random.randint(c_low, c_high)
-        if len(n) == 0 or (i not in n and min(abs(x - i) for x in n) > 1):
-            n.append(i)
+    n = gen_nums(m, c_low, c_high)
 
     ops = ["+", "-", "*", "/"]
     l = set()
@@ -189,6 +215,18 @@ def write_digits(filepath):
 
 
 if __name__ == "__main__":
+    # For testing retry
+    # r = random.random()
+    # if r < 0.333:
+    #     print("Sleeping")
+    #     time.sleep(200)
+    # elif r >= 0.333 and r <= 0.666:
+    #     print("Error")
+    #     raise ValueError("Error")
+    # else:
+    #     print("Success")
+
+    
     # today --> yesterday
     shutil.copyfile("data/data_today.json", "data/data_yesterday.json")
     # tomorrow --> today
