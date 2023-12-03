@@ -219,8 +219,11 @@ function setMergeAnimation(c1: string, c2: string) {
 
 function surrendered() {
   solutionRevealed.value = true
-  localStorage.setItem('r' + round.value + 'Failed', 'true')
-  $('#r' + round.value + '-failed').removeClass('d-none')
+  if ((localStorage.getItem('r' + round.value + 'Complete') || 'false') === 'false') {
+    localStorage.setItem('r' + round.value + 'Failed', 'true')
+    $('#r' + round.value + '-failed').removeClass('d-none')
+  }
+
 }
 
 function checkWinner() {
@@ -613,7 +616,7 @@ onMounted(() => {
         {{ solutions[n] }}
       </div>
     </div>
-    <div class="mb-5 mx-auto text-center list-unstyled" v-else>
+    <div class="mb-5 mx-auto text-center" v-else>
       <button
         type="button"
         class="mx-auto text-center btn border"
