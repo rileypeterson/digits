@@ -602,8 +602,8 @@ onMounted(() => {
     <!-- <div class="row justify-content-center">
       <button type="button" class="btn btn-outline-secondary w-25">Submit</button>
     </div> -->
-    <div class="mx-auto text-center unstyled">
-      <div class="mx-auto text-center unstyled" v-for="expression in expressions" :key="expression">
+    <div class="mx-auto text-center">
+      <div class="mx-auto text-center" v-for="expression in expressions" :key="expression">
         {{ expression }}
       </div>
     </div>
@@ -641,15 +641,6 @@ onMounted(() => {
   perspective: 1000px;
 }
 
-/* ul > li {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-} */
-
 @keyframes shake {
   10%,
   90% {
@@ -672,16 +663,6 @@ onMounted(() => {
     transform: translate3d(4px, 0, 0);
   }
 }
-
-/* .v-enter-active,
-.v-leave-active {
-  transition: opacity 1s;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-} */
 
 .target {
   width: 300px;

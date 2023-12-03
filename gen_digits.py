@@ -3,6 +3,7 @@ from itertools import product, permutations
 import json
 import shutil
 import datetime
+import time
 
 
 def gen_nums(m, c_low, c_high):
@@ -31,7 +32,6 @@ def gen_nums(m, c_low, c_high):
                 sep_count += 1
     if sep_count >= 3:
         return gen_nums(m, c_low, c_high)  
-    # print(sorted(n))
     return n
 
 
@@ -215,6 +215,15 @@ def write_digits(filepath):
 
 
 if __name__ == "__main__":
+    r = random.random()
+    if r < 0.333:
+        print("Sleeping")
+        time.sleep(200)
+    elif r >= 0.333 and r <= 0.666:
+        print("Error")
+        raise ValueError("Error")
+    else:
+        print("Success")
     # today --> yesterday
     shutil.copyfile("data/data_today.json", "data/data_yesterday.json")
     # tomorrow --> today
