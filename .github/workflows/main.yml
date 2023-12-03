@@ -27,9 +27,13 @@ jobs:
           python-version: '3.10'
 
       - name: Generate Digits
-        run: |
-          export PYTHONPATH=$PYTHONPATH:`pwd`
-          python gen_digits.py
+        uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 180
+          max_attempts: 5
+          command: |
+            export PYTHONPATH=$PYTHONPATH:`pwd`
+            python gen_digits.py
 
       # Add new files in data folder, commit along with other modified files, push
       - name: Commit files
