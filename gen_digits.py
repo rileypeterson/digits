@@ -215,15 +215,18 @@ def write_digits(filepath):
 
 
 if __name__ == "__main__":
-    r = random.random()
-    if r < 0.333:
-        print("Sleeping")
-        time.sleep(200)
-    elif r >= 0.333 and r <= 0.666:
-        print("Error")
-        raise ValueError("Error")
-    else:
-        print("Success")
+    # For testing retry
+    # r = random.random()
+    # if r < 0.333:
+    #     print("Sleeping")
+    #     time.sleep(200)
+    # elif r >= 0.333 and r <= 0.666:
+    #     print("Error")
+    #     raise ValueError("Error")
+    # else:
+    #     print("Success")
+
+    
     # today --> yesterday
     shutil.copyfile("data/data_today.json", "data/data_yesterday.json")
     # tomorrow --> today
