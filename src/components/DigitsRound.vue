@@ -16,6 +16,7 @@ const round = ref(props?.data?.round)
 const firstCircle = ref('')
 const secondCircle = ref('')
 const selectedOp = ref('')
+// const solutionRevealed = ref(localStorage.getItem('r' + round.value + 'Failed') === 'true' || false)
 const solutionRevealed = ref(false)
 
 const opMap = {
@@ -222,18 +223,60 @@ function surrendered() {
   if ((localStorage.getItem('r' + round.value + 'Complete') || 'false') === 'false') {
     localStorage.setItem('r' + round.value + 'Failed', 'true')
     $('#r' + round.value + '-failed').removeClass('d-none')
+    // disableButtons()
   }
+}
 
+function endingConfetti() {
+  // do this for 30 seconds
+  var duration = 3 * 1000
+  var end = Date.now() + duration
+
+  ;(function frame() {
+    // launch a few confetti from the left edge
+    confetti({
+      particleCount: 7,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 }
+    })
+    // and launch a few from the right edge
+    confetti({
+      particleCount: 7,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 }
+    })
+
+    // keep going until we are out of time
+    if (Date.now() < end) {
+      requestAnimationFrame(frame)
+    }
+  })()
 }
 
 function checkWinner() {
   if (mapCircleToValue(firstCircle.value).value === target.value) {
-    if (!solutionRevealed.value) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      })
+    if (!solutionRevealed.value && localStorage.getItem('r' + round.value + 'Failed') === 'false') {
+      localStorage.setItem('r' + round.value + 'Complete', 'true')
+      // Disable the buttons immediately after winning for completed rounds
+      disableButtons()
+      if (
+        localStorage.getItem('r1Complete') === 'true' &&
+        localStorage.getItem('r2Complete') === 'true' &&
+        localStorage.getItem('r3Complete') === 'true' &&
+        localStorage.getItem('r4Complete') === 'true' &&
+        localStorage.getItem('r5Complete') === 'true'
+      ) {
+        endingConfetti()
+      } else {
+        // Baby confetti
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        })
+      }
     }
 
     localStorage.setItem('r' + round.value + 'Expressions', JSON.stringify(expressions))
@@ -247,18 +290,26 @@ function checkWinner() {
     localStorage.setItem('r' + round.value + 'lowerRight', lowerRight.value)
 
     setTimeout(() => {
-      if (!solutionRevealed.value) {
-        localStorage.setItem('r' + round.value + 'Complete', 'true')
+      // If the solution hasn't been revealed and the round hasn't been failed (survived refresh)
+      if (
+        !solutionRevealed.value &&
+        localStorage.getItem('r' + round.value + 'Failed') === 'false'
+      ) {
         $('#r' + round.value + '-complete').removeClass('d-none')
       }
       if (
-        (localStorage.getItem('r1Complete') || 'false') === 'true' &&
-        (localStorage.getItem('r2Complete') || 'false') === 'true' &&
-        (localStorage.getItem('r3Complete') || 'false') === 'true' &&
-        (localStorage.getItem('r4Complete') || 'false') === 'true' &&
-        (localStorage.getItem('r5Complete') || 'false') === 'true'
+        ((localStorage.getItem('r1Complete') || 'false') === 'true' ||
+          (localStorage.getItem('r1Failed') || 'false') === 'true') &&
+        ((localStorage.getItem('r2Complete') || 'false') === 'true' ||
+          (localStorage.getItem('r2Failed') || 'false') === 'true') &&
+        ((localStorage.getItem('r3Complete') || 'false') === 'true' ||
+          (localStorage.getItem('r3Failed') || 'false') === 'true') &&
+        ((localStorage.getItem('r4Complete') || 'false') === 'true' ||
+          (localStorage.getItem('r4Failed') || 'false') === 'true') &&
+        ((localStorage.getItem('r5Complete') || 'false') === 'true' ||
+          (localStorage.getItem('r5Failed') || 'false') === 'true')
       ) {
-        // If all rounds complete go to round 5
+        // If all rounds complete (or failed) go to round 5
         document.getElementById('r5-tab')?.click()
       } else {
         let nextRound = (round.value % 5) + 1
@@ -281,9 +332,13 @@ function checkWinner() {
 }
 
 function fullReset(this: any, cell: string) {
-  if (isOp(cell) && cell === 'refresh') {
-    let maybeRefresh = false
-    if (localStorage.getItem('r' + round.value + 'Complete') === 'true') {
+  if (
+    isOp(cell) &&
+    cell === 'refresh' &&
+    localStorage.getItem('r' + round.value + 'Complete') === 'false'
+  ) {
+    // let maybeRefresh = false
+    if (localStorage.getItem('r' + round.value + 'Complete') === 'false') {
       // Remove the local storage
       localStorage.removeItem('r' + round.value + 'Expressions')
       localStorage.removeItem('r' + round.value + 'Numbers')
@@ -294,8 +349,8 @@ function fullReset(this: any, cell: string) {
       localStorage.removeItem('r' + round.value + 'lowerLeft')
       localStorage.removeItem('r' + round.value + 'lowerCenter')
       localStorage.removeItem('r' + round.value + 'lowerRight')
-      localStorage.setItem('r' + round.value + 'Complete', 'false')
-      maybeRefresh = true
+      // localStorage.setItem('r' + round.value + 'Complete', 'false')
+      // maybeRefresh = true
     }
 
     while (history.length > 1) {
@@ -322,9 +377,11 @@ function fullReset(this: any, cell: string) {
       lowerCenter.value = h?.lowerCenter || ''
       lowerRight.value = h?.lowerRight || ''
     }
-    if (maybeRefresh) {
-      location.reload()
-    }
+    // Might need this for something????
+    // if (maybeRefresh) {
+    //   location.reload()
+    //   localStorage.setItem('roundFromRefreshedTab', round.value)
+    // }
   }
   return
 }
@@ -484,20 +541,56 @@ function handleClick(cell: string) {
   console.log('unaccounted')
 }
 
+function disableButtons() {
+  if (localStorage.getItem('r' + round.value + 'Complete') === 'true') {
+    ;(document.getElementById('r' + round.value + '-upperRight') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(
+      document.getElementById('r' + round.value + '-upperCenter') as HTMLButtonElement
+    ).setAttribute('disabled', 'disabled')
+    ;(document.getElementById('r' + round.value + '-upperLeft') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round.value + '-lowerLeft') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(
+      document.getElementById('r' + round.value + '-lowerCenter') as HTMLButtonElement
+    ).setAttribute('disabled', 'disabled')
+    ;(document.getElementById('r' + round.value + '-lowerRight') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round.value + '-plus') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round.value + '-minus') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round.value + '-times') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round.value + '-divide') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round.value + '-refresh') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+  }
+}
+
 // After mounted get the right round
 onMounted(() => {
-  if (localStorage.getItem('r' + round.value + 'Complete') === 'true') {
-    ;(document.getElementById('upperRight') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('upperCenter') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('upperLeft') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('lowerLeft') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('lowerCenter') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('lowerRight') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('plus') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('minus') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('times') as HTMLButtonElement).disabled = true
-    ;(document.getElementById('divide') as HTMLButtonElement).disabled = true
-  }
+  disableButtons()
 })
 </script>
 
@@ -508,7 +601,7 @@ onMounted(() => {
     </div>
     <div class="row justify-content-center mb-2">
       <NumberCircle
-        id="upperLeft"
+        :id="'r' + round + '-upperLeft'"
         :v="upperLeft"
         :class="{
           green: numbers.upperLeft.isClicked,
@@ -518,7 +611,7 @@ onMounted(() => {
         @click="handleClick('upperLeft')"
       ></NumberCircle>
       <NumberCircle
-        id="upperCenter"
+        :id="'r' + round + '-upperCenter'"
         :v="upperCenter"
         :class="{
           green: numbers.upperCenter.isClicked,
@@ -528,7 +621,7 @@ onMounted(() => {
         @click="handleClick('upperCenter')"
       ></NumberCircle>
       <NumberCircle
-        id="upperRight"
+        :id="'r' + round + '-upperRight'"
         :v="upperRight"
         :class="{
           green: numbers.upperRight.isClicked,
@@ -540,7 +633,7 @@ onMounted(() => {
     </div>
     <div class="row justify-content-center mb-3">
       <NumberCircle
-        id="lowerLeft"
+        :id="'r' + round + '-lowerLeft'"
         :v="lowerLeft"
         :class="{
           green: numbers.lowerLeft.isClicked,
@@ -550,7 +643,7 @@ onMounted(() => {
         @click="handleClick('lowerLeft')"
       ></NumberCircle>
       <NumberCircle
-        id="lowerCenter"
+        :id="'r' + round + '-lowerCenter'"
         :v="lowerCenter"
         :class="{
           green: numbers.lowerCenter.isClicked,
@@ -560,7 +653,7 @@ onMounted(() => {
         @click="handleClick('lowerCenter')"
       ></NumberCircle>
       <NumberCircle
-        id="lowerRight"
+        :id="'r' + round + '-lowerRight'"
         :v="lowerRight"
         :class="{
           green: numbers.lowerRight.isClicked,
@@ -572,31 +665,32 @@ onMounted(() => {
     </div>
     <div class="row justify-content-center mb-4">
       <OperatorCircle
+        :id="'r' + round + '-refresh'"
         op="&#8635;"
         :class="{ green: ops.refresh.isClicked, shaking: ops.refresh.isShaked }"
         @click="handleClick('refresh')"
         @dblclick="fullReset('refresh')"
       ></OperatorCircle>
       <OperatorCircle
-        id="plus"
+        :id="'r' + round + '-plus'"
         op="&plus;"
         :class="{ green: ops.plus.isClicked, shaking: ops.plus.isShaked }"
         @click="handleClick('plus')"
       ></OperatorCircle>
       <OperatorCircle
-        id="minus"
+        :id="'r' + round + '-minus'"
         op="&minus;"
         :class="{ green: ops.minus.isClicked, shaking: ops.minus.isShaked }"
         @click="handleClick('minus')"
       ></OperatorCircle>
       <OperatorCircle
-        id="times"
+        :id="'r' + round + '-times'"
         op="&times;"
         :class="{ green: ops.times.isClicked, shaking: ops.times.isShaked }"
         @click="handleClick('times')"
       ></OperatorCircle>
       <OperatorCircle
-        id="divide"
+        :id="'r' + round + '-divide'"
         op="&divide;"
         :class="{ green: ops.divide.isClicked, shaking: ops.divide.isShaked }"
         @click="handleClick('divide')"
