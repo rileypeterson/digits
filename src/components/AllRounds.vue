@@ -207,11 +207,7 @@ onMounted(() => {
     var el = document.querySelector('#r' + r + '-tab')
     // console.log(el)
     el?.addEventListener('shown.bs.tab', function (event) {
-      console.log(r + ' clicked')
-      console.log(document.getElementById('plus'))
-      console.log(document.getElementById('plus')?.disabled)
       disableButtons(r.toString())
-      console.log(document.getElementById('plus')?.disabled)
     })
   }
 })
