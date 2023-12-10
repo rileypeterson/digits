@@ -203,9 +203,7 @@ onMounted(() => {
   advanceToNextRound()
 
   for (let r = 1; r <= 5; r++) {
-    // console.log(r)
     var el = document.querySelector('#r' + r + '-tab')
-    // console.log(el)
     el?.addEventListener('shown.bs.tab', function (event) {
       disableButtons(r.toString())
     })
