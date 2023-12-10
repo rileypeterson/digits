@@ -15,7 +15,7 @@ let storedDateString = localStorage.getItem('lastVisitDateString')
 let lastData = localStorage.getItem('lastData')
 if (!storedDateString || (todayDate !== storedDateString && lastData)) {
   // Never been to site or it's a new date, then the data needs to be update
-  localStorage.clear();
+  localStorage.clear()
   localStorage.setItem('lastVisitDateString', todayDate)
   localStorage.setItem('r1Complete', 'false')
   localStorage.setItem('r2Complete', 'false')
@@ -116,24 +116,104 @@ const r4Failed = ref((localStorage.getItem('r4Failed') || 'false') === 'true')
 const r5Failed = ref((localStorage.getItem('r5Failed') || 'false') === 'true')
 
 function advanceToNextRound() {
-  if (((localStorage.getItem('r1Complete') || 'false') === 'false') && ((localStorage.getItem('r1Failed') || 'false') === 'false')) {
+  if (localStorage.getItem('roundFromRefreshedTab')) {
+    document.getElementById('r' + localStorage.getItem('roundFromRefreshedTab') + '-tab')?.click()
+    localStorage.removeItem('roundFromRefreshedTab')
+    return
+  }
+  if (
+    (localStorage.getItem('r1Complete') || 'false') === 'false' &&
+    (localStorage.getItem('r1Failed') || 'false') === 'false'
+  ) {
     document.getElementById('r1-tab')?.click()
-  } else if (((localStorage.getItem('r2Complete') || 'false') === 'false') && ((localStorage.getItem('r2Failed') || 'false') === 'false')) {
+  } else if (
+    (localStorage.getItem('r2Complete') || 'false') === 'false' &&
+    (localStorage.getItem('r2Failed') || 'false') === 'false'
+  ) {
     document.getElementById('r2-tab')?.click()
-  } else if (((localStorage.getItem('r3Complete') || 'false') === 'false') && ((localStorage.getItem('r3Failed') || 'false') === 'false')) {
+  } else if (
+    (localStorage.getItem('r3Complete') || 'false') === 'false' &&
+    (localStorage.getItem('r3Failed') || 'false') === 'false'
+  ) {
     document.getElementById('r3-tab')?.click()
-  } else if (((localStorage.getItem('r4Complete') || 'false') === 'false') && ((localStorage.getItem('r4Failed') || 'false') === 'false')) {
+  } else if (
+    (localStorage.getItem('r4Complete') || 'false') === 'false' &&
+    (localStorage.getItem('r4Failed') || 'false') === 'false'
+  ) {
     document.getElementById('r4-tab')?.click()
-  } else if (((localStorage.getItem('r5Complete') || 'false') === 'false') && ((localStorage.getItem('r5Failed') || 'false') === 'false')) {
+  } else if (
+    (localStorage.getItem('r5Complete') || 'false') === 'false' &&
+    (localStorage.getItem('r5Failed') || 'false') === 'false'
+  ) {
     document.getElementById('r5-tab')?.click()
   } else {
     document.getElementById('r5-tab')?.click()
   }
 }
 
+function disableButtons(round_value: string) {
+  if (localStorage.getItem('r' + round_value + 'Complete') === 'true') {
+    ;(document.getElementById('r' + round_value + '-upperRight') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(
+      document.getElementById('r' + round_value + '-upperCenter') as HTMLButtonElement
+    ).setAttribute('disabled', 'disabled')
+    ;(document.getElementById('r' + round_value + '-upperLeft') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round_value + '-lowerRight') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(
+      document.getElementById('r' + round_value + '-lowerCenter') as HTMLButtonElement
+    ).setAttribute('disabled', 'disabled')
+    ;(document.getElementById('r' + round_value + '-lowerLeft') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round_value + '-refresh') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round_value + '-plus') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round_value + '-minus') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round_value + '-times') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+    ;(document.getElementById('r' + round_value + '-divide') as HTMLButtonElement).setAttribute(
+      'disabled',
+      'disabled'
+    )
+  }
+}
+
 // After mounted get the right round
 onMounted(() => {
   advanceToNextRound()
+
+  for (let r = 1; r <= 5; r++) {
+    // console.log(r)
+    var el = document.querySelector('#r' + r + '-tab')
+    // console.log(el)
+    el?.addEventListener('shown.bs.tab', function (event) {
+      console.log(r + ' clicked')
+      console.log(document.getElementById('plus'))
+      console.log(document.getElementById('plus')?.disabled)
+      disableButtons(r.toString())
+      console.log(document.getElementById('plus')?.disabled)
+    })
+  }
 })
 </script>
 
