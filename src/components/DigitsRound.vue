@@ -337,7 +337,7 @@ function fullReset(this: any, cell: string) {
     cell === 'refresh' &&
     localStorage.getItem('r' + round.value + 'Complete') === 'false'
   ) {
-    let maybeRefresh = false
+    // let maybeRefresh = false
     if (localStorage.getItem('r' + round.value + 'Complete') === 'false') {
       // Remove the local storage
       localStorage.removeItem('r' + round.value + 'Expressions')
@@ -350,7 +350,7 @@ function fullReset(this: any, cell: string) {
       localStorage.removeItem('r' + round.value + 'lowerCenter')
       localStorage.removeItem('r' + round.value + 'lowerRight')
       // localStorage.setItem('r' + round.value + 'Complete', 'false')
-      maybeRefresh = true
+      // maybeRefresh = true
     }
 
     while (history.length > 1) {
@@ -377,10 +377,11 @@ function fullReset(this: any, cell: string) {
       lowerCenter.value = h?.lowerCenter || ''
       lowerRight.value = h?.lowerRight || ''
     }
-    if (maybeRefresh) {
-      location.reload()
-      localStorage.setItem('roundFromRefreshedTab', round.value)
-    }
+    // Might need this for something????
+    // if (maybeRefresh) {
+    //   location.reload()
+    //   localStorage.setItem('roundFromRefreshedTab', round.value)
+    // }
   }
   return
 }
