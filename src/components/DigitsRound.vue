@@ -223,7 +223,6 @@ function surrendered() {
     localStorage.setItem('r' + round.value + 'Failed', 'true')
     $('#r' + round.value + '-failed').removeClass('d-none')
   }
-
 }
 
 function checkWinner() {
@@ -234,6 +233,8 @@ function checkWinner() {
         spread: 70,
         origin: { y: 0.6 }
       })
+      // Disable the buttons immediately after winning for completed rounds
+      disableButtons()
     }
 
     localStorage.setItem('r' + round.value + 'Expressions', JSON.stringify(expressions))
@@ -252,13 +253,18 @@ function checkWinner() {
         $('#r' + round.value + '-complete').removeClass('d-none')
       }
       if (
-        (localStorage.getItem('r1Complete') || 'false') === 'true' &&
-        (localStorage.getItem('r2Complete') || 'false') === 'true' &&
-        (localStorage.getItem('r3Complete') || 'false') === 'true' &&
-        (localStorage.getItem('r4Complete') || 'false') === 'true' &&
-        (localStorage.getItem('r5Complete') || 'false') === 'true'
+        (localStorage.getItem('r1Complete') || 'false') === 'true' ||
+        ((localStorage.getItem('r1Failed') || 'false') === 'true' &&
+          (localStorage.getItem('r2Complete') || 'false') === 'true') ||
+        ((localStorage.getItem('r2Failed') || 'false') === 'true' &&
+          (localStorage.getItem('r3Complete') || 'false') === 'true') ||
+        ((localStorage.getItem('r3Failed') || 'false') === 'true' &&
+          (localStorage.getItem('r4Complete') || 'false') === 'true') ||
+        ((localStorage.getItem('r4Failed') || 'false') === 'true' &&
+          (localStorage.getItem('r5Complete') || 'false') === 'true') ||
+        (localStorage.getItem('r5Failed') || 'false') === 'true'
       ) {
-        // If all rounds complete go to round 5
+        // If all rounds complete (or failed) go to round 5
         document.getElementById('r5-tab')?.click()
       } else {
         let nextRound = (round.value % 5) + 1
@@ -484,8 +490,7 @@ function handleClick(cell: string) {
   console.log('unaccounted')
 }
 
-// After mounted get the right round
-onMounted(() => {
+function disableButtons() {
   if (localStorage.getItem('r' + round.value + 'Complete') === 'true') {
     ;(document.getElementById('upperRight') as HTMLButtonElement).disabled = true
     ;(document.getElementById('upperCenter') as HTMLButtonElement).disabled = true
@@ -498,6 +503,11 @@ onMounted(() => {
     ;(document.getElementById('times') as HTMLButtonElement).disabled = true
     ;(document.getElementById('divide') as HTMLButtonElement).disabled = true
   }
+}
+
+// After mounted get the right round
+onMounted(() => {
+  disableButtons()
 })
 </script>
 
