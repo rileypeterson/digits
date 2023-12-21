@@ -666,32 +666,32 @@ onMounted(() => {
     <div class="row justify-content-center mb-4">
       <OperatorCircle
         :id="'r' + round + '-refresh'"
-        op="&#8635;"
+        :path="'/src/assets/images/refresh.png'"
         :class="{ green: ops.refresh.isClicked, shaking: ops.refresh.isShaked }"
         @click="handleClick('refresh')"
         @dblclick="fullReset('refresh')"
       ></OperatorCircle>
       <OperatorCircle
         :id="'r' + round + '-plus'"
-        op="&plus;"
+        :path="'/src/assets/images/plus.png'"
         :class="{ green: ops.plus.isClicked, shaking: ops.plus.isShaked }"
         @click="handleClick('plus')"
       ></OperatorCircle>
       <OperatorCircle
         :id="'r' + round + '-minus'"
-        op="&minus;"
+        :path="'/src/assets/images/minus.png'"
         :class="{ green: ops.minus.isClicked, shaking: ops.minus.isShaked }"
         @click="handleClick('minus')"
       ></OperatorCircle>
       <OperatorCircle
         :id="'r' + round + '-times'"
-        op="&times;"
+        :path="'/src/assets/images/times.png'"
         :class="{ green: ops.times.isClicked, shaking: ops.times.isShaked }"
         @click="handleClick('times')"
       ></OperatorCircle>
       <OperatorCircle
         :id="'r' + round + '-divide'"
-        op="&divide;"
+        :path="'/src/assets/images/divide.png'"
         :class="{ green: ops.divide.isClicked, shaking: ops.divide.isShaked }"
         @click="handleClick('divide')"
       ></OperatorCircle>

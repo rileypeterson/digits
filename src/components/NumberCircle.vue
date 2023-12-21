@@ -18,19 +18,19 @@ defineProps<{
 
 .number-circle {
   transition: all var(--color-change-time);
-    width: 95px;
-    height: 95px;
-    border-radius: 50%;
-    border: 3px dashed black;
-    font-size: 40px;
-    font-weight: bold;
-    color: #000000;
-    display: flex; /* or inline-flex */
-    align-items: center;
-    justify-content: center;
-    background: #ffffff;
-    margin-left: 5px;
-    margin-right: 5px;
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  border: 3px dashed black;
+  font-size: 40px;
+  font-weight: bold;
+  color: #000000;
+  display: flex; /* or inline-flex */
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 @media (min-width: 400px) {
@@ -56,11 +56,11 @@ defineProps<{
 @media (min-width: 576px) {
   .number-circle {
     transition: all var(--color-change-time);
-    width: 150px;
-    height: 150px;
+    width: 136px;
+    height: 136px;
     border-radius: 50%;
     border: 3px dashed black;
-    font-size: 60px;
+    font-size: 56px;
     font-weight: bold;
     color: #000000;
     display: flex; /* or inline-flex */
