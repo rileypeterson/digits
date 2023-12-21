@@ -1,12 +1,19 @@
 <script setup lang="ts">
-defineProps<{
-  path: string
+import {defineProps} from "vue";
+
+const props = defineProps<{
+  path: String
 }>()
+
+function getImageUrl() {
+  let s = new URL(`../assets/images/${props.path}`, import.meta.url)
+  return s.href
+}
 </script>
 
 <template>
   <button class="operator-circle">
-    <img :src="path" />
+    <img :src="getImageUrl()" />
   </button>
 </template>
 
