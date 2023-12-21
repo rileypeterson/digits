@@ -1,21 +1,16 @@
 <script setup lang="ts">
 defineProps<{
-  op: string
+  path: string
 }>()
 </script>
 
 <template>
   <button class="operator-circle">
-    <span>{{ op }}</span>
+    <img :src="path" />
   </button>
 </template>
 
 <style scoped>
-.operator-circle > span {
-  position: relative;
-  top: calc(50% - 25px);
-}
-
 .operator-circle.green {
   transition: all var(--color-change-time);
   background: var(--green);
@@ -40,6 +35,11 @@ defineProps<{
   margin-right: 4px;
 }
 
+.operator-circle > img {
+  width: 32px;
+  height: 32px;
+}
+
 @media (min-width: 400px) {
   .operator-circle {
     transition: all var(--color-change-time);
@@ -57,9 +57,9 @@ defineProps<{
     margin-left: 4px;
     margin-right: 4px;
   }
-  .operator-circle > span {
-    position: relative;
-    top: calc(50% - 30px);
+  .operator-circle > img {
+    width: 38px;
+    height: 38px;
   }
 }
 
@@ -67,11 +67,11 @@ defineProps<{
 @media (min-width: 576px) {
   .operator-circle {
     transition: all var(--color-change-time);
-    width: 80px;
-    height: 80px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     border: 3px dashed black;
-    font-size: 60px;
+    font-size: 56px;
     font-weight: bold;
     color: #ffffff;
     background: #000000;
@@ -79,9 +79,9 @@ defineProps<{
     margin-right: 4px;
     padding: 0;
   }
-  .operator-circle > span {
-    position: relative;
-    top: calc(50% - 40px);
+  .operator-circle > img {
+    width: 46px;
+    height: 46px;
   }
 }
 
