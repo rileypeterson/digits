@@ -215,7 +215,7 @@ onMounted(() => {
   <div class="container-fluid w-100">
     <div class="text-center">{{ puzzleDate }}</div>
     <ul class="nav nav-tabs justify-content-center row px-0 mx-0" id="myTab" role="tablist">
-      <li class="nav-item col-4 col-lg-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2 mx-0 px-0" role="presentation">
         <button
           class="nav-link active text-nowrap mx-auto"
           id="r1-tab"
@@ -242,7 +242,7 @@ onMounted(() => {
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-lg-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2 mx-0 px-0" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="r2-tab"
@@ -269,7 +269,7 @@ onMounted(() => {
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-lg-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2 mx-0 px-0" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="r3-tab"
@@ -296,7 +296,7 @@ onMounted(() => {
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-lg-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2 mx-0 px-0" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="r4-tab"
@@ -323,7 +323,7 @@ onMounted(() => {
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-lg-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2 mx-0 px-0" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="r5-tab"
@@ -350,7 +350,7 @@ onMounted(() => {
           </p>
         </button>
       </li>
-      <li class="nav-item col-4 col-lg-2" role="presentation">
+      <li class="nav-item col-4 col-lg-2 mx-0 px-0" role="presentation">
         <button
           class="nav-link text-nowrap mx-auto"
           id="about-tab"
@@ -406,7 +406,7 @@ onMounted(() => {
 }
 
 .nav-link {
-  font-size: 1.2rem;
+  font-size: 0.8rem;
 }
 
 #about-tab {
@@ -414,6 +414,15 @@ onMounted(() => {
 }
 
 @media (min-width: 400px) {
+  .scale {
+    height: auto;
+    width: 1.5em;
+  }
+
+  .nav-link {
+    font-size: 1.05rem;
+  }
+
   #myTab {
     width: 100%;
   }

@@ -706,7 +706,7 @@ onMounted(() => {
     </div>
     <div class="mx-auto text-center" v-if="solutionRevealed">
       <div class="mx-auto text-center" style="font-weight: bold">Solutions:</div>
-      <div class="mx-auto text-center" v-for="n in 5">
+      <div class="solution mx-auto text-center" v-for="n in 5">
         {{ solutions[n] }}
       </div>
     </div>
@@ -762,14 +762,24 @@ onMounted(() => {
 }
 
 .target {
-  width: 300px;
-  height: 150px;
-  line-height: 150px;
-  font-size: 72px;
+  width: auto;
+  height: 125px;
+  line-height: 125px;
+  font-size: 66px;
   font-weight: bold;
   color: #000000;
   text-align: center;
   background: #ffffff;
+}
+
+.solution {
+  font-size: 0.8rem;
+}
+
+@media (min-width: 400px) {
+  .solution {
+    font-size: 0.9rem;
+  }
 }
 
 /* Small devices (landscape phones, 576px and up) */
@@ -784,17 +794,29 @@ onMounted(() => {
     text-align: center;
     background: #ffffff;
   }
+  .solution {
+    font-size: 1.0rem;
+  }
 }
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
+  .solution {
+    font-size: 1.0rem;
+  }
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
+  .solution {
+    font-size: 1.0rem;
+  }
 }
 
 /* X-Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
+  .solution {
+    font-size: 1.0rem;
+  }
 }
 </style>
