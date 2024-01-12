@@ -18,11 +18,11 @@ defineProps<{
 
 .number-circle {
   transition: all var(--color-change-time);
-  width: 95px;
-  height: 95px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   border: 3px dashed black;
-  font-size: 40px;
+  font-size: 36px;
   font-weight: bold;
   color: #000000;
   display: flex; /* or inline-flex */
@@ -36,8 +36,8 @@ defineProps<{
 @media (min-width: 400px) {
   .number-circle {
     transition: all var(--color-change-time);
-    width: 110px;
-    height: 110px;
+    width: 105px;
+    height: 105px;
     border-radius: 50%;
     border: 3px dashed black;
     font-size: 45px;

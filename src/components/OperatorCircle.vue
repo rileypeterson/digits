@@ -25,8 +25,8 @@ function getImageUrl() {
 
 .operator-circle {
   transition: all var(--color-change-time);
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 3px dashed black;
   font-size: 40px;
@@ -48,11 +48,11 @@ function getImageUrl() {
 @media (min-width: 400px) {
   .operator-circle {
     transition: all var(--color-change-time);
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     border: 3px dashed black;
-    font-size: 50px;
+    font-size: 48px;
     font-weight: bold;
     color: #ffffff;
     display: flex; /* or inline-flex */
