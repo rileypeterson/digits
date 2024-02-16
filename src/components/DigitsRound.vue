@@ -707,7 +707,7 @@ onMounted(() => {
     <div class="mx-auto text-center" v-if="solutionRevealed">
       <div class="mx-auto text-center" style="font-weight: bold">Solutions:</div>
       <div class="solution mx-auto text-center" v-for="n in 5">
-        {{ solutions[n] }}
+        {{ solutions[n-1] }}
       </div>
     </div>
     <div class="mb-5 mx-auto text-center" v-else>
