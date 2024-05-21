@@ -227,16 +227,16 @@ onMounted(() => {
           aria-selected="true"
           style="color: var(--round-green)"
         >
-          <p class="m-0 p-0">
+          <p class="m-0 p-0 d-flex align-items-center">
             Round 1
             <img
               id="r1-complete"
-              v-bind:class="r1Complete ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r1Complete ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
             <img
               id="r1-failed"
-              v-bind:class="r1Failed ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r1Failed ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/red-x.png"
             />
           </p>
@@ -254,16 +254,16 @@ onMounted(() => {
           aria-selected="false"
           style="color: var(--round-green)"
         >
-          <p class="m-0 p-0">
+          <p class="m-0 p-0 d-flex align-items-center">
             Round 2
             <img
               id="r2-complete"
-              v-bind:class="r2Complete ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r2Complete ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
             <img
               id="r2-failed"
-              v-bind:class="r2Failed ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r2Failed ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/red-x.png"
             />
           </p>
@@ -281,16 +281,16 @@ onMounted(() => {
           aria-selected="false"
           style="color: var(--round-green)"
         >
-          <p class="m-0 p-0">
+          <p class="m-0 p-0 d-flex align-items-center">
             Round 3
             <img
               id="r3-complete"
-              v-bind:class="r3Complete ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r3Complete ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
             <img
               id="r3-failed"
-              v-bind:class="r3Failed ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r3Failed ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/red-x.png"
             />
           </p>
@@ -308,16 +308,16 @@ onMounted(() => {
           aria-selected="false"
           style="color: var(--round-green)"
         >
-          <p class="m-0 p-0">
+          <p class="m-0 p-0 d-flex align-items-center">
             Round 4
             <img
               id="r4-complete"
-              v-bind:class="r4Complete ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r4Complete ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
             <img
               id="r4-failed"
-              v-bind:class="r4Failed ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r4Failed ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/red-x.png"
             />
           </p>
@@ -335,16 +335,16 @@ onMounted(() => {
           aria-selected="false"
           style="color: var(--round-green)"
         >
-          <p class="m-0 p-0">
+          <p class="m-0 p-0 d-flex align-items-center">
             Round 5
             <img
               id="r5-complete"
-              v-bind:class="r5Complete ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r5Complete ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/check-mark.png"
             />
             <img
               id="r5-failed"
-              v-bind:class="r5Failed ? 'scale align-top' : 'scale align-top d-none'"
+              v-bind:class="r5Failed ? 'scale align-top ms-1' : 'scale align-top d-none'"
               src="@/assets/images/red-x.png"
             />
           </p>

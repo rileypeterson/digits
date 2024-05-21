@@ -223,6 +223,7 @@ function surrendered() {
   if ((localStorage.getItem('r' + round.value + 'Complete') || 'false') === 'false') {
     localStorage.setItem('r' + round.value + 'Failed', 'true')
     $('#r' + round.value + '-failed').removeClass('d-none')
+    $('#r' + round.value + '-failed').addClass('ms-1')
     // disableButtons()
   }
 }
@@ -296,6 +297,7 @@ function checkWinner() {
         localStorage.getItem('r' + round.value + 'Failed') === 'false'
       ) {
         $('#r' + round.value + '-complete').removeClass('d-none')
+        $('#r' + round.value + '-complete').addClass('ms-1')
       }
       if (
         ((localStorage.getItem('r1Complete') || 'false') === 'true' ||
