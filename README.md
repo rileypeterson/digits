@@ -1,4 +1,4 @@
-# Digits
+# [Digits](https://rileypeterson.github.io/digits/)
 
 Numbers game based on NYT digits which was discontinued.
 
