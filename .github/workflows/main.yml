@@ -26,20 +26,34 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v6.0.2
       - uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.14'
           check-latest: true
 
       - name: Generate Digits
-        uses: nick-fields/retry@v4.0.0
-        with:
-          timeout_seconds: 180
-          max_attempts: 5
-          command: |
-            export PYTHONPATH=$PYTHONPATH:`pwd`
-            python gen_digits.py
+        run: |
+          set -euo pipefail
+          export PYTHONPATH="$PYTHONPATH:$(pwd)"
+
+          timeout_seconds=180
+          max_attempts=5
+
+          for attempt in $(seq 1 "$max_attempts"); do
+            echo "Generate Digits attempt $attempt/$max_attempts"
+
+            if timeout "$timeout_seconds" python gen_digits.py; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq "$max_attempts" ]; then
+              echo "gen_digits.py failed after $max_attempts attempts"
+              exit 1
+            fi
+
+            echo "Attempt $attempt failed, retrying..."
+          done
 
       # Add new files in data folder, commit along with other modified files, push
       - name: Commit files
