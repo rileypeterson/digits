@@ -1,10 +1,10 @@
 <script setup lang="ts">
 const props = defineProps<{
-  path: String
+  path: string
 }>()
 
 function getImageUrl() {
-  let s = new URL(`../assets/images/${props.path}`, import.meta.url)
+  const s = new URL(`../assets/images/${props.path}`, import.meta.url)
   return s.href
 }
 </script>

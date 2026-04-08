@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: generate_digits
 
 # Controls when the workflow will run
@@ -11,6 +9,13 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+concurrency:
+  group: generate-digits-${{ github.ref }}
+  cancel-in-progress: true
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -21,28 +26,41 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-python@v6.2.0
         with:
-          python-version: '3.10'
+          python-version: '3.14'
+          check-latest: true
 
       - name: Generate Digits
-        uses: nick-fields/retry@v2
-        with:
-          timeout_seconds: 180
-          max_attempts: 5
-          command: |
-            export PYTHONPATH=$PYTHONPATH:`pwd`
-            python gen_digits.py
+        run: |
+          set -euo pipefail
+          export PYTHONPATH="$PYTHONPATH:$(pwd)"
+
+          timeout_seconds=180
+          max_attempts=5
+
+          for attempt in $(seq 1 "$max_attempts"); do
+            echo "Generate Digits attempt $attempt/$max_attempts"
+
+            if timeout "$timeout_seconds" python gen_digits.py; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq "$max_attempts" ]; then
+              echo "gen_digits.py failed after $max_attempts attempts"
+              exit 1
+            fi
+
+            echo "Attempt $attempt failed, retrying..."
+          done
 
       # Add new files in data folder, commit along with other modified files, push
       - name: Commit files
         run: |
-          git config --local user.name github-actions
-          git config --local user.email "actions@github.com"
-          git add data/*
-          git diff-index --quiet HEAD || git commit -am "GH ACTION $GITHUB_WORKFLOW $(date)"
+          set -euo pipefail
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/*.json
+          git diff --cached --quiet || git commit -m "GH ACTION $GITHUB_WORKFLOW $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           git push origin $GITHUB_REF_NAME
-        env:
-          REPO_KEY: ${{secrets.GITHUB_TOKEN}}
-          username: github-actions

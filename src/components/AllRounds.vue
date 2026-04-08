@@ -1,109 +1,106 @@
 <script setup lang="ts">
 import DigitsRound from './DigitsRound.vue'
-import { reactive, ref, onMounted } from 'vue'
-// @ts-ignore
-import $ from 'jquery'
+import { nextTick, onMounted, reactive, ref } from 'vue'
+
+type PuzzleData = {
+  puzzleDate: string | null
+  r1: Record<string, unknown>
+  r2: Record<string, unknown>
+  r3: Record<string, unknown>
+  r4: Record<string, unknown>
+  r5: Record<string, unknown>
+}
+
+function emptyPuzzleData(): PuzzleData {
+  return {
+    puzzleDate: null,
+    r1: {},
+    r2: {},
+    r3: {},
+    r4: {},
+    r5: {}
+  }
+}
+
+async function fetchPuzzleData(branch: string, filename: string): Promise<PuzzleData> {
+  const response = await fetch(
+    `https://raw.githubusercontent.com/rileypeterson/digits/${branch}/data/${filename}`
+  )
+  if (!response.ok) {
+    throw new Error(`Failed to load ${filename}: ${response.status}`)
+  }
+  return response.json()
+}
 
 // Get the localize date string for the player
-let today = new Date()
-let todayDate = [
+const today = new Date()
+const todayDate = [
   today.getFullYear(),
   ('0' + (today.getMonth() + 1)).slice(-2),
   ('0' + today.getDate()).slice(-2)
 ].join('-')
-let storedDateString = localStorage.getItem('lastVisitDateString')
-let lastData = localStorage.getItem('lastData')
-if (!storedDateString || (todayDate !== storedDateString && lastData)) {
-  // Never been to site or it's a new date, then the data needs to be update
-  localStorage.clear()
-  localStorage.setItem('lastVisitDateString', todayDate)
-  localStorage.setItem('r1Complete', 'false')
-  localStorage.setItem('r2Complete', 'false')
-  localStorage.setItem('r3Complete', 'false')
-  localStorage.setItem('r4Complete', 'false')
-  localStorage.setItem('r5Complete', 'false')
-  localStorage.setItem('r1Failed', 'false')
-  localStorage.setItem('r2Failed', 'false')
-  localStorage.setItem('r3Failed', 'false')
-  localStorage.setItem('r4Failed', 'false')
-  localStorage.setItem('r5Failed', 'false')
+const data = reactive<PuzzleData>(emptyPuzzleData())
+const puzzleDate = ref('')
+const dataLoaded = ref(false)
 
-  // Fetch data
-  let branch = 'main'
-  let dYesterday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
-  function getYesterdayData() {
-    $.ajax({
-      url:
-        'https://raw.githubusercontent.com/rileypeterson/digits/' +
-        branch +
-        '/data/data_yesterday.json',
-      type: 'get',
-      dataType: 'json',
-      crossDomain: true,
-      async: false,
-      success: function (resp: any) {
-        dYesterday = resp
-      }
-    })
+async function initializePuzzleData() {
+  const storedDateString = localStorage.getItem('lastVisitDateString')
+  const lastData = localStorage.getItem('lastData')
+  if (!storedDateString || !lastData || todayDate !== storedDateString) {
+    // Never been to site or it's a new date, then the data needs to be update
+    localStorage.clear()
+    localStorage.setItem('lastVisitDateString', todayDate)
+    localStorage.setItem('r1Complete', 'false')
+    localStorage.setItem('r2Complete', 'false')
+    localStorage.setItem('r3Complete', 'false')
+    localStorage.setItem('r4Complete', 'false')
+    localStorage.setItem('r5Complete', 'false')
+    localStorage.setItem('r1Failed', 'false')
+    localStorage.setItem('r2Failed', 'false')
+    localStorage.setItem('r3Failed', 'false')
+    localStorage.setItem('r4Failed', 'false')
+    localStorage.setItem('r5Failed', 'false')
+
+    // Fetch data
+    const branch = 'main'
+    const [dYesterday, dToday, dTomorrow] = await Promise.all([
+      fetchPuzzleData(branch, 'data_yesterday.json'),
+      fetchPuzzleData(branch, 'data_today.json'),
+      fetchPuzzleData(branch, 'data_tomorrow.json')
+    ])
+
+    // Get the date that comes with each payload
+    const dYesterdayDate = dYesterday.puzzleDate
+    const dTodayDate = dToday.puzzleDate
+    const dTomorrowDate = dTomorrow.puzzleDate
+
+    // Get the date which corresponds to the correct date
+    if (todayDate == dYesterdayDate) {
+      localStorage.setItem('puzzleDate', dYesterdayDate)
+      localStorage.setItem('lastData', JSON.stringify(dYesterday))
+    } else if (todayDate == dTodayDate) {
+      localStorage.setItem('puzzleDate', dTodayDate)
+      localStorage.setItem('lastData', JSON.stringify(dToday))
+    } else if (todayDate == dTomorrowDate) {
+      localStorage.setItem('puzzleDate', dTomorrowDate)
+      localStorage.setItem('lastData', JSON.stringify(dTomorrow))
+    }
   }
-  getYesterdayData()
 
-  let dToday = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
-  function getTodayData() {
-    $.ajax({
-      url:
-        'https://raw.githubusercontent.com/rileypeterson/digits/' +
-        branch +
-        '/data/data_today.json',
-      type: 'get',
-      dataType: 'json',
-      crossDomain: true,
-      async: false,
-      success: function (resp: any) {
-        dToday = resp
-      }
+  const storedPuzzleData = JSON.parse(localStorage.getItem('lastData') || 'null')
+  Object.assign(data, storedPuzzleData || emptyPuzzleData())
+  puzzleDate.value = localStorage.getItem('puzzleDate') || ''
+  dataLoaded.value = true
+  await nextTick()
+  advanceToNextRound()
+
+  for (let r = 1; r <= 5; r++) {
+    const el = document.querySelector('#r' + r + '-tab')
+    el?.addEventListener('shown.bs.tab', function () {
+      disableButtons(r.toString())
     })
-  }
-  getTodayData()
-
-  let dTomorrow = { puzzleDate: null, r1: {}, r2: {}, r3: {}, r4: {}, r5: {} }
-  function getTomorrowData() {
-    $.ajax({
-      url:
-        'https://raw.githubusercontent.com/rileypeterson/digits/' +
-        branch +
-        '/data/data_tomorrow.json',
-      type: 'get',
-      dataType: 'json',
-      crossDomain: true,
-      async: false,
-      success: function (resp: any) {
-        dTomorrow = resp
-      }
-    })
-  }
-  getTomorrowData()
-
-  // Get the date that comes with each payload
-  let dYesterdayDate = dYesterday['puzzleDate']
-  let dTodayDate = dToday['puzzleDate']
-  let dTomorrowDate = dTomorrow['puzzleDate']
-
-  // Get the date which corresponds to the correct date
-  if (todayDate == dYesterdayDate) {
-    localStorage.setItem('puzzleDate', dYesterdayDate)
-    localStorage.setItem('lastData', JSON.stringify(dYesterday))
-  } else if (todayDate == dTodayDate) {
-    localStorage.setItem('puzzleDate', dTodayDate)
-    localStorage.setItem('lastData', JSON.stringify(dToday))
-  } else if (todayDate == dTomorrowDate) {
-    localStorage.setItem('puzzleDate', dTomorrowDate)
-    localStorage.setItem('lastData', JSON.stringify(dTomorrow))
   }
 }
-
-const data = reactive(JSON.parse(localStorage.getItem('lastData') || '{}'))
-const puzzleDate = ref(localStorage.getItem('puzzleDate') || '')
 const r1Complete = ref((localStorage.getItem('r1Complete') || 'false') === 'true')
 const r2Complete = ref((localStorage.getItem('r2Complete') || 'false') === 'true')
 const r3Complete = ref((localStorage.getItem('r3Complete') || 'false') === 'true')
@@ -200,21 +197,14 @@ function disableButtons(round_value: string) {
 
 // After mounted get the right round
 onMounted(() => {
-  advanceToNextRound()
-
-  for (let r = 1; r <= 5; r++) {
-    var el = document.querySelector('#r' + r + '-tab')
-    el?.addEventListener('shown.bs.tab', function (event) {
-      disableButtons(r.toString())
-    })
-  }
+  void initializePuzzleData()
 })
 </script>
 
 <template>
   <div class="container-fluid w-100">
     <div class="text-center">{{ puzzleDate }}</div>
-    <ul class="nav nav-tabs justify-content-center row px-0 mx-0" id="myTab" role="tablist">
+    <ul v-if="dataLoaded" class="nav nav-tabs justify-content-center row px-0 mx-0" id="myTab" role="tablist">
       <li class="nav-item col-4 col-lg-2 mx-0 px-0" role="presentation">
         <button
           class="nav-link active text-nowrap mx-auto"
@@ -366,7 +356,7 @@ onMounted(() => {
         </button>
       </li>
     </ul>
-    <div class="tab-content" id="myTabContent">
+    <div v-if="dataLoaded" class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="r1" role="tabpanel" aria-labelledby="r1-tab">
         <DigitsRound :data="data['r1']"></DigitsRound>
       </div>
@@ -389,11 +379,11 @@ onMounted(() => {
         aria-labelledby="about-tab"
       >
         I loved to play the New York Times Digits game. Unfortunately, it was
-        <a target="_blank" href="https://www.nytimes.com/games/digits">discontinued</a>. So, I built
+        <a target="_blank" rel="noopener noreferrer" href="https://www.nytimes.com/games/digits">discontinued</a>. So, I built
         this version of it.
         <br />
         The source code is available
-        <a target="_blank" href="https://github.com/rileypeterson/digits">here</a>.
+        <a target="_blank" rel="noopener noreferrer" href="https://github.com/rileypeterson/digits">here</a>.
       </div>
     </div>
   </div>
