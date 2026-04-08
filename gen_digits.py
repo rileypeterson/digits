@@ -105,7 +105,7 @@ def calc(m, c_low, c_high, t_low, t_high, t_prob_thresh):
 def write_digits(filepath):
     d = {
         "puzzleDate": (
-            datetime.datetime.utcnow() + datetime.timedelta(days=1)
+            datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
         ).strftime("%Y-%m-%d")
     }
     # Range from 2, 30
