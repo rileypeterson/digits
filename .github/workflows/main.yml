@@ -35,7 +35,7 @@ jobs:
       - name: Generate Digits
         run: |
           set -euo pipefail
-          export PYTHONPATH="$PYTHONPATH:$(pwd)"
+          export PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$(pwd)"
 
           timeout_seconds=180
           max_attempts=5
