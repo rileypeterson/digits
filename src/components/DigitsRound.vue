@@ -3,14 +3,27 @@ import NumberCircle from './NumberCircle.vue'
 import OperatorCircle from './OperatorCircle.vue'
 import { ref, reactive, onMounted } from 'vue'
 import { confetti } from 'tsparticles-confetti'
-// @ts-ignore
-import $ from 'jquery'
 
 const props = defineProps({
   data: Object
 })
 
 const round = ref(props?.data?.round)
+type OpKey = 'refresh' | 'plus' | 'minus' | 'times' | 'divide'
+type NumberState = {
+  [key: string]: boolean | typeof upperLeft
+  v: typeof upperLeft
+  isClicked: boolean
+  isVisible: boolean
+  isShaked: boolean
+}
+type NumbersState = Record<string, NumberState>
+type OpState = {
+  [key: string]: boolean
+  isClicked: boolean
+  isShaked: boolean
+}
+type OpsState = Record<string, OpState>
 
 // The circles that the user picks and in what order
 const firstCircle = ref('')
@@ -19,7 +32,7 @@ const selectedOp = ref('')
 // const solutionRevealed = ref(localStorage.getItem('r' + round.value + 'Failed') === 'true' || false)
 const solutionRevealed = ref(false)
 
-const opMap = {
+const opMap: Record<Exclude<OpKey, 'refresh'>, string> = {
   times: '*',
   divide: '÷',
   minus: '-',
@@ -39,7 +52,7 @@ const lowerCenter = ref(
   localStorage.getItem('r' + round.value + 'lowerCenter') || props?.data?.n[4]
 )
 const lowerRight = ref(localStorage.getItem('r' + round.value + 'lowerRight') || props?.data?.n[5])
-const expressions = reactive(
+const expressions = reactive<string[]>(
   JSON.parse(localStorage.getItem('r' + round.value + 'Expressions') || '[]')
 )
 const solutions: Array<string> = reactive(Object.values(props?.data?.how[target.value] || {}))
@@ -59,8 +72,8 @@ const t1 = ref('0%')
 const t2 = ref('0%')
 
 // State data
-let cachedNumbers = JSON.parse(localStorage.getItem('r' + round.value + 'Numbers') || '{}')
-const numbers: any = reactive({
+const cachedNumbers = JSON.parse(localStorage.getItem('r' + round.value + 'Numbers') || '{}')
+const numbers: NumbersState = reactive({
   upperLeft: { v: upperLeft, isClicked: false, isVisible: true, isShaked: false },
   upperCenter: { v: upperCenter, isClicked: false, isVisible: true, isShaked: false },
   upperRight: { v: upperRight, isClicked: false, isVisible: true, isShaked: false },
@@ -68,7 +81,7 @@ const numbers: any = reactive({
   lowerCenter: { v: lowerCenter, isClicked: false, isVisible: true, isShaked: false },
   lowerRight: { v: lowerRight, isClicked: false, isVisible: true, isShaked: false }
 })
-if (!$.isEmptyObject(cachedNumbers)) {
+if (Object.keys(cachedNumbers).length > 0) {
   numbers['upperLeft']['v'] = upperLeft
   numbers['upperCenter']['v'] = upperCenter
   numbers['upperRight']['v'] = upperRight
@@ -97,8 +110,7 @@ if (!$.isEmptyObject(cachedNumbers)) {
   numbers['lowerCenter']['isShaked'] = cachedNumbers['lowerCenter']['isShaked']
   numbers['lowerRight']['isShaked'] = cachedNumbers['lowerRight']['isShaked']
 }
-let cachedOps = JSON.parse(localStorage.getItem('r' + round.value + 'Ops') || '{}')
-const ops: any = reactive({
+const ops: OpsState = reactive({
   refresh: { isClicked: false, isShaked: false },
   plus: { isClicked: false, isShaked: false },
   minus: { isClicked: false, isShaked: false },
@@ -120,10 +132,10 @@ let h0 = {
   lowerRight: lowerRight.value,
   expressions: JSON.parse(JSON.stringify(expressions))
 }
-let history = [h0]
+const history = [h0]
 
 // Start of functions
-const isOp = (s: string) => {
+const isOp = (s: string): s is OpKey => {
   return ['refresh', 'plus', 'minus', 'times', 'divide'].includes(s)
 }
 
@@ -134,6 +146,7 @@ function mapCircleToValue(s: string) {
   if (s == 'lowerLeft') return lowerLeft
   if (s == 'lowerCenter') return lowerCenter
   if (s == 'lowerRight') return lowerRight
+  throw new Error(`Unknown circle: ${s}`)
 }
 
 function applyOp(fc: number, op: string, sc: number) {
@@ -150,8 +163,7 @@ function applyOp(fc: number, op: string, sc: number) {
   if (res >= 0 && Number.isInteger(res)) {
     setTimeout(function () {
       mapCircleToValue(secondCircle.value).value = res
-      // @ts-ignore
-      expressions.push(fc + ' ' + opMap[op] + ' ' + sc + ' = ' + res)
+      expressions.push(fc + ' ' + opMap[op as Exclude<OpKey, 'refresh'>] + ' ' + sc + ' = ' + res)
       checkWinner()
     }, 400)
     return true
@@ -222,16 +234,16 @@ function surrendered() {
   solutionRevealed.value = true
   if ((localStorage.getItem('r' + round.value + 'Complete') || 'false') === 'false') {
     localStorage.setItem('r' + round.value + 'Failed', 'true')
-    $('#r' + round.value + '-failed').removeClass('d-none')
-    $('#r' + round.value + '-failed').addClass('ms-1')
+    document.getElementById('r' + round.value + '-failed')?.classList.remove('d-none')
+    document.getElementById('r' + round.value + '-failed')?.classList.add('ms-1')
     // disableButtons()
   }
 }
 
 function endingConfetti() {
   // do this for 30 seconds
-  var duration = 3 * 1000
-  var end = Date.now() + duration
+  const duration = 3 * 1000
+  const end = Date.now() + duration
 
   ;(function frame() {
     // launch a few confetti from the left edge
@@ -296,8 +308,8 @@ function checkWinner() {
         !solutionRevealed.value &&
         localStorage.getItem('r' + round.value + 'Failed') === 'false'
       ) {
-        $('#r' + round.value + '-complete').removeClass('d-none')
-        $('#r' + round.value + '-complete').addClass('ms-1')
+        document.getElementById('r' + round.value + '-complete')?.classList.remove('d-none')
+        document.getElementById('r' + round.value + '-complete')?.classList.add('ms-1')
       }
       if (
         ((localStorage.getItem('r1Complete') || 'false') === 'true' ||
@@ -333,7 +345,7 @@ function checkWinner() {
   }
 }
 
-function fullReset(this: any, cell: string) {
+function fullReset(cell: string) {
   if (
     isOp(cell) &&
     cell === 'refresh' &&
@@ -359,14 +371,14 @@ function fullReset(this: any, cell: string) {
       history.pop()
     }
     if (history.length >= 1) {
-      let h = history.pop()
-      for (let k in numbers) {
-        for (let j in numbers[k]) numbers[k][j] = h?.numbers[k][j]
+      const h = history.pop()
+      for (const k in numbers) {
+        for (const j in numbers[k]) numbers[k][j] = h?.numbers[k][j]
       }
-      for (let k in ops) {
-        for (let j in ops[k]) ops[k][j] = h?.ops[k][j]
+      for (const k in ops) {
+        for (const j in ops[k]) ops[k][j] = h?.ops[k][j]
       }
-      for (let k in expressions) {
+      for (const k in expressions) {
         expressions[k] = h?.expressions[k]
       }
       firstCircle.value = h?.firstCircle || ''
@@ -392,14 +404,14 @@ function handleClick(cell: string) {
   if (isOp(cell) && cell === 'refresh') {
     // Empty history
     if (history.length >= 1) {
-      let h = history.pop()
-      for (let k in numbers) {
-        for (let j in numbers[k]) numbers[k][j] = h?.numbers[k][j]
+      const h = history.pop()
+      for (const k in numbers) {
+        for (const j in numbers[k]) numbers[k][j] = h?.numbers[k][j]
       }
-      for (let k in ops) {
-        for (let j in ops[k]) ops[k][j] = h?.ops[k][j]
+      for (const k in ops) {
+        for (const j in ops[k]) ops[k][j] = h?.ops[k][j]
       }
-      for (let k in expressions) {
+      for (const k in expressions) {
         expressions[k] = h?.expressions[k]
       }
       firstCircle.value = h?.firstCircle || ''
@@ -434,7 +446,7 @@ function handleClick(cell: string) {
   // TODO: Where does this belong?
   // Should do for ops too?
   // Set shake to false
-  for (let circle in numbers) {
+  for (const circle in numbers) {
     numbers[circle].isShaked = false
   }
 
@@ -443,13 +455,13 @@ function handleClick(cell: string) {
     if (firstCircle.value == cell) {
       // Case when you try and select secondCircle == firstCircle after op
       selectedOp.value = ''
-      for (let op in ops) {
+      for (const op in ops) {
         ops[op].isClicked = false
       }
     }
-    let og_value = firstCircle.value
+    const og_value = firstCircle.value
     firstCircle.value = ''
-    for (let circle in numbers) {
+    for (const circle in numbers) {
       numbers[circle].isClicked = false
     }
     if (cell != og_value) handleClick(cell)
@@ -476,7 +488,7 @@ function handleClick(cell: string) {
       ops[cell].isClicked = false
     } else {
       // Selecting a different op
-      for (let op in ops) {
+      for (const op in ops) {
         ops[op].isClicked = false
       }
       selectedOp.value = cell
@@ -489,10 +501,10 @@ function handleClick(cell: string) {
     secondCircle.value = cell
     numbers[cell].isClicked = true
     // Valid operation
-    let fc: number = mapCircleToValue(firstCircle.value).value
-    let op: string = selectedOp.value
-    let sc: number = mapCircleToValue(secondCircle.value).value
-    let t = applyOp(fc, op, sc)
+    const fc: number = mapCircleToValue(firstCircle.value).value
+    const op: string = selectedOp.value
+    const sc: number = mapCircleToValue(secondCircle.value).value
+    const t = applyOp(fc, op, sc)
     if (t) {
       // Merge animation
       setMergeAnimation(firstCircle.value, secondCircle.value)
@@ -708,7 +720,7 @@ onMounted(() => {
     </div>
     <div class="mx-auto text-center" v-if="solutionRevealed">
       <div class="mx-auto text-center" style="font-weight: bold">Solutions:</div>
-      <div class="solution mx-auto text-center" v-for="n in 5">
+      <div class="solution mx-auto text-center" v-for="n in 5" :key="n">
         {{ solutions[n-1] }}
       </div>
     </div>
