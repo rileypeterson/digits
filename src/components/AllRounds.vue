@@ -39,9 +39,40 @@ const todayDate = [
   ('0' + (today.getMonth() + 1)).slice(-2),
   ('0' + today.getDate()).slice(-2)
 ].join('-')
+const TOTAL_ROUNDS = 5
 const data = reactive<PuzzleData>(emptyPuzzleData())
 const puzzleDate = ref('')
 const dataLoaded = ref(false)
+const r1Complete = ref(false)
+const r2Complete = ref(false)
+const r3Complete = ref(false)
+const r4Complete = ref(false)
+const r5Complete = ref(false)
+const r1Failed = ref(false)
+const r2Failed = ref(false)
+const r3Failed = ref(false)
+const r4Failed = ref(false)
+const r5Failed = ref(false)
+
+function resetStoredRoundStatuses() {
+  for (let round = 1; round <= TOTAL_ROUNDS; round++) {
+    localStorage.setItem(`r${round}Complete`, 'false')
+    localStorage.setItem(`r${round}Failed`, 'false')
+  }
+}
+
+function syncRoundStatusRefs() {
+  r1Complete.value = (localStorage.getItem('r1Complete') || 'false') === 'true'
+  r2Complete.value = (localStorage.getItem('r2Complete') || 'false') === 'true'
+  r3Complete.value = (localStorage.getItem('r3Complete') || 'false') === 'true'
+  r4Complete.value = (localStorage.getItem('r4Complete') || 'false') === 'true'
+  r5Complete.value = (localStorage.getItem('r5Complete') || 'false') === 'true'
+  r1Failed.value = (localStorage.getItem('r1Failed') || 'false') === 'true'
+  r2Failed.value = (localStorage.getItem('r2Failed') || 'false') === 'true'
+  r3Failed.value = (localStorage.getItem('r3Failed') || 'false') === 'true'
+  r4Failed.value = (localStorage.getItem('r4Failed') || 'false') === 'true'
+  r5Failed.value = (localStorage.getItem('r5Failed') || 'false') === 'true'
+}
 
 async function initializePuzzleData() {
   const storedDateString = localStorage.getItem('lastVisitDateString')
@@ -50,16 +81,7 @@ async function initializePuzzleData() {
     // Never been to site or it's a new date, then the data needs to be update
     localStorage.clear()
     localStorage.setItem('lastVisitDateString', todayDate)
-    localStorage.setItem('r1Complete', 'false')
-    localStorage.setItem('r2Complete', 'false')
-    localStorage.setItem('r3Complete', 'false')
-    localStorage.setItem('r4Complete', 'false')
-    localStorage.setItem('r5Complete', 'false')
-    localStorage.setItem('r1Failed', 'false')
-    localStorage.setItem('r2Failed', 'false')
-    localStorage.setItem('r3Failed', 'false')
-    localStorage.setItem('r4Failed', 'false')
-    localStorage.setItem('r5Failed', 'false')
+    resetStoredRoundStatuses()
 
     // Fetch data
     const branch = 'main'
@@ -90,6 +112,7 @@ async function initializePuzzleData() {
   const storedPuzzleData = JSON.parse(localStorage.getItem('lastData') || 'null')
   Object.assign(data, storedPuzzleData || emptyPuzzleData())
   puzzleDate.value = localStorage.getItem('puzzleDate') || ''
+  syncRoundStatusRefs()
   dataLoaded.value = true
   await nextTick()
   advanceToNextRound()
@@ -101,17 +124,6 @@ async function initializePuzzleData() {
     })
   }
 }
-const r1Complete = ref((localStorage.getItem('r1Complete') || 'false') === 'true')
-const r2Complete = ref((localStorage.getItem('r2Complete') || 'false') === 'true')
-const r3Complete = ref((localStorage.getItem('r3Complete') || 'false') === 'true')
-const r4Complete = ref((localStorage.getItem('r4Complete') || 'false') === 'true')
-const r5Complete = ref((localStorage.getItem('r5Complete') || 'false') === 'true')
-const r1Failed = ref((localStorage.getItem('r1Failed') || 'false') === 'true')
-const r2Failed = ref((localStorage.getItem('r2Failed') || 'false') === 'true')
-const r3Failed = ref((localStorage.getItem('r3Failed') || 'false') === 'true')
-const r4Failed = ref((localStorage.getItem('r4Failed') || 'false') === 'true')
-const r5Failed = ref((localStorage.getItem('r5Failed') || 'false') === 'true')
-
 function advanceToNextRound() {
   if (localStorage.getItem('roundFromRefreshedTab')) {
     document.getElementById('r' + localStorage.getItem('roundFromRefreshedTab') + '-tab')?.click()
